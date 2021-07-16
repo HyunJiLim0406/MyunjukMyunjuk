@@ -17,10 +17,11 @@ public class KakaoApi {
 
     @Value("${kakao.key}")
     private String key;
-    private String url = "https://dapi.kakao.com/v3/search/book";
+    @Value("${kakao.url}")
+    private String url;
 
     @GetMapping("/kakao")
-    public Map callApi(@RequestParam String query) {
+    public ResponseEntity<?> callApi(@RequestParam String query) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "KakaoAK " + key); //Authorization 설정
@@ -33,7 +34,6 @@ public class KakaoApi {
                 .toUri();
 
         //GetForObject는 헤더를 정의할 수 없음
-        ResponseEntity<Map> result = restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class);
-        return result.getBody(); //내용 반환
+        return restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class); //내용 반환
     }
 }
