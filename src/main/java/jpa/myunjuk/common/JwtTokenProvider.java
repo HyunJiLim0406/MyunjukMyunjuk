@@ -1,10 +1,8 @@
 package jpa.myunjuk.common;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +19,12 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "myunjuk";
+    @Value("${secret.key}")
+    private String secretKey;
 
-    //토큰의 유효시간 30분
-    private long tokenValidTime = 30 * 60 * 1000L;
+    private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L; //유효시간 30분
+    private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 12 * 1000L; //유효시간 2주
+
     private final UserDetailsService userDetailsService;
 
     //객체 초기화. secretKey를 Base64로 인코딩
@@ -33,15 +33,28 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    //JWT 토큰 생성
-    public String createToken(String userPk, List<String> roles) {
+    //JWT access token 생성
+    public String createAccessToken(String userPk, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(userPk); //JWT payload에 저장되는 정보단위
         claims.put("roles", roles); //key - value 쌍으로 저장
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims) //정보 저장
                 .setIssuedAt(now) //토큰 발행 시간
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) //토큰 만료 시간
+                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_VALID_TIME)) //토큰 만료 시간
+                .signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
+                .compact();
+    }
+
+    //JWT refresh token 생성
+    public String createRefreshToken(String value){
+        Claims claims = Jwts.claims();
+        claims.put("value", value);
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims) //정보 저장
+                .setIssuedAt(now) //토큰 발행 시간
+                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_VALID_TIME)) //토큰 만료 시간
                 .signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
                 .compact();
     }
@@ -70,5 +83,9 @@ public class JwtTokenProvider {
         } catch (Exception e) { //유효성
             return false;
         }
+    }
+
+    public Jws<Claims> getClaimsFromJwtToken(String jwtToken) throws JwtException {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
     }
 }
