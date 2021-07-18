@@ -1,14 +1,12 @@
 package jpa.myunjuk.controller;
 
-import io.jsonwebtoken.JwtException;
 import jpa.myunjuk.common.JwtTokenProvider;
 import jpa.myunjuk.domain.UserTest;
 import jpa.myunjuk.repository.UserTestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +32,8 @@ public class UserController {
     }
 
     //로그인
-    @PostMapping("/login")
-    public String[] login(@RequestBody Map<String, String> user){
+    @PostMapping("/log-in")
+    public String[] logIn(@RequestBody Map<String, String> user){
         UserTest member = userTestRepository.findByEmail(user.get("email"))
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
         if(!passwordEncoder.matches(user.get("password"), member.getPassword())){
@@ -46,11 +44,24 @@ public class UserController {
         //return jwtTokenProvider.createAccessToken(member.getUsername(), member.getRoles());
     }
 
+    //로그아웃
+    @PostMapping("/log-out")
+    public UserTest logOut(@AuthenticationPrincipal UserTest userTest){
+        userTest.setRefreshTokenValue(null);
+        userTestRepository.save(userTest);
+        return userTest;
+    }
+
     //token 재발행
     @PostMapping("/refresh-tokens")
     public String[] refreshUserToken(@RequestBody Map<String, String> user){
         String[] refreshTokensResult = refreshUserTokens(user.get("email"), user.get("refreshToken"));
         return refreshTokensResult;
+    }
+
+    @GetMapping("/resource")
+    public UserTest resource(@AuthenticationPrincipal UserTest userTest){
+        return userTest;
     }
 
     //토큰 재발행
@@ -63,7 +74,7 @@ public class UserController {
     }
 
     private void checkIfRefreshTokenValid(String requiredValue, String givenRefreshToken) { //유효한지 확인
-        String givenValue = String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(givenRefreshToken).getBody().get("value"));
+        String givenValue = String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(givenRefreshToken).get("value"));
         if(!givenValue.equals(requiredValue)){
             System.out.println("나중에 예외 처리 추가 필요");
         }
