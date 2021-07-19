@@ -1,4 +1,4 @@
-package jpa.myunjuk.common;
+package jpa.myunjuk.infra.api;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

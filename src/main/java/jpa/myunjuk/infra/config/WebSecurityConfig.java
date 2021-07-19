@@ -1,5 +1,7 @@
-package jpa.myunjuk.common;
+package jpa.myunjuk.infra.config;
 
+import jpa.myunjuk.infra.jwt.JwtAuthenticationFilter;
+import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;

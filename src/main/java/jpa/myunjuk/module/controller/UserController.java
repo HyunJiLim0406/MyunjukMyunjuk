@@ -1,6 +1,6 @@
 package jpa.myunjuk.module.controller;
 
-import jpa.myunjuk.common.JwtTokenProvider;
+import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import jpa.myunjuk.module.model.domain.UserTest;
 import jpa.myunjuk.module.repository.UserTestRepository;
 import lombok.RequiredArgsConstructor;

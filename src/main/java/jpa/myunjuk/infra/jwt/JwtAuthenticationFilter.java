@@ -1,4 +1,4 @@
-package jpa.myunjuk.common;
+package jpa.myunjuk.infra.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
