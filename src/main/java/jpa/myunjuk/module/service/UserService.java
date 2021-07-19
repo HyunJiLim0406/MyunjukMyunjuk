@@ -71,12 +71,22 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     *
+     * @param user
+     * @return UserDto
+     */
     public UserDto logOut(User user){
         user.setRefreshTokenValue(null);
         userRepository.save(user);
         return buildUserDtoFromUser(user);
     }
 
+    /**
+     *
+     * @param jwtRefreshReqDto
+     * @return JwtDto
+     */
     public JwtDto refreshUserTokens(JwtRefreshReqDto jwtRefreshReqDto){
         User user = userRepository.findByEmail(jwtRefreshReqDto.getEmail())
                 .orElseThrow(() -> new NoSuchDataException("email=" + jwtRefreshReqDto.getEmail()));
