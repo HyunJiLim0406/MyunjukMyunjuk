@@ -1,6 +1,6 @@
-package jpa.myunjuk.repository;
+package jpa.myunjuk.module.repository;
 
-import jpa.myunjuk.domain.UserTest;
+import jpa.myunjuk.module.model.domain.UserTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

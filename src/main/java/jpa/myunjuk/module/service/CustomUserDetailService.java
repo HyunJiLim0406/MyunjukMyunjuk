@@ -1,6 +1,6 @@
-package jpa.myunjuk.service;
+package jpa.myunjuk.module.service;
 
-import jpa.myunjuk.repository.UserTestRepository;
+import jpa.myunjuk.module.repository.UserTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

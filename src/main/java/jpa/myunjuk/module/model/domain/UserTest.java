@@ -1,4 +1,4 @@
-package jpa.myunjuk.domain;
+package jpa.myunjuk.module.model.domain;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

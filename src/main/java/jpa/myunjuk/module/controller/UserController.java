@@ -1,8 +1,8 @@
-package jpa.myunjuk.controller;
+package jpa.myunjuk.module.controller;
 
 import jpa.myunjuk.common.JwtTokenProvider;
-import jpa.myunjuk.domain.UserTest;
-import jpa.myunjuk.repository.UserTestRepository;
+import jpa.myunjuk.module.model.domain.UserTest;
+import jpa.myunjuk.module.repository.UserTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
