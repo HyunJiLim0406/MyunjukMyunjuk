@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,12 @@ public class User implements UserDetails {
     @Column(length = 300)
     @NotNull
     private String password;
+
+    @NotNull
+    private String nickname;
+
+    @Column(name = "user_img")
+    private String img;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCharacter> userCharacters = new ArrayList<>();

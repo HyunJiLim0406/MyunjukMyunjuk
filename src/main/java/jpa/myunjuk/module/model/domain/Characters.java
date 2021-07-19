@@ -21,6 +21,7 @@ public class Characters {
     @GeneratedValue
     private Long id;
 
+    @Column(name = "character_img")
     @NotNull
     private String img;
 

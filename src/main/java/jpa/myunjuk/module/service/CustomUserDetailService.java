@@ -1,6 +1,7 @@
 package jpa.myunjuk.module.service;
 
-import jpa.myunjuk.module.repository.UserTestRepository;
+import jpa.myunjuk.infra.exception.NoSuchDataException;
+import jpa.myunjuk.module.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,11 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
-    private final UserTestRepository userTestRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userTestRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new NoSuchDataException("userId=" + username));
     }
 }
