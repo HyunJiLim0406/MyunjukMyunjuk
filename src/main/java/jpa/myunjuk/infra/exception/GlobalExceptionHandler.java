@@ -1,6 +1,5 @@
 package jpa.myunjuk.infra.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,12 +14,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchDataException.class)
     public ResponseEntity<?> handleNoSuchDataException(final NoSuchDataException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME()));
+        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
     }
 
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<?> handleDuplicateUserException(final DuplicateUserException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME()));
+        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidReqParamException.class)
+    public ResponseEntity<?> handleInvalidReqParamException(final InvalidReqParamException e){
+        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,14 +35,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(InvalidReqParamException.class)
-    public ResponseEntity<?> handleInvalidReqParamException(final InvalidReqParamException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME()));
-    }
-
-    private Map<String, String> errorMsg(String msg) {
+    private Map<String, String> errorMsg(String name, String msg) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", msg);
+        error.put(name, msg);
         return error;
     }
 }
