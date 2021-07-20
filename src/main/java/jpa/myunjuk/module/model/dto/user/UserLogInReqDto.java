@@ -12,12 +12,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NotNull
 public class UserLogInReqDto {
 
-    @NotNull
     @Email
     private String email;
-
-    @NotNull
     private String password;
 }

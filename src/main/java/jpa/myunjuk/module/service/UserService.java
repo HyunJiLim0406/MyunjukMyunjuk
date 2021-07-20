@@ -1,6 +1,7 @@
 package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.DuplicateUserException;
+import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import jpa.myunjuk.module.model.domain.User;
@@ -27,7 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     /**
-     *
+     * join
      * @param userJoinReqDto
      * @return UserDto
      */
@@ -40,20 +41,20 @@ public class UserService {
     private void checkDuplicateUser(String email) {
         userRepository.findByEmail(email)
                 .ifPresent(param -> {
-                    throw new DuplicateUserException("email=" + email);
+                    throw new DuplicateUserException("email = " + email);
                 });
     }
 
     /**
-     *
+     * logIn
      * @param userLogInReqDto
      * @return JwtDto
      */
     public JwtDto logIn(UserLogInReqDto userLogInReqDto) {
         User user = userRepository.findByEmail(userLogInReqDto.getEmail())
-                .orElseThrow(() -> new NoSuchDataException("email=" + userLogInReqDto.getEmail()));
+                .orElseThrow(() -> new NoSuchDataException("email = " + userLogInReqDto.getEmail()));
         if (!passwordEncoder.matches(userLogInReqDto.getPassword(), user.getPassword()))
-            throw new NoSuchDataException("password=" + userLogInReqDto.getPassword());
+            throw new NoSuchDataException("password = " + userLogInReqDto.getPassword());
         String[] jwtTokens = createJwtTokens(user, user.getRoles());
         return buildJwtDto(user, jwtTokens);
     }
@@ -72,24 +73,13 @@ public class UserService {
     }
 
     /**
-     *
-     * @param user
-     * @return UserDto
-     */
-    public UserDto logOut(User user){
-        user.setRefreshTokenValue(null);
-        userRepository.save(user);
-        return buildUserDtoFromUser(user);
-    }
-
-    /**
-     *
+     * refreshToken
      * @param jwtRefreshReqDto
      * @return JwtDto
      */
     public JwtDto refreshUserTokens(JwtRefreshReqDto jwtRefreshReqDto){
         User user = userRepository.findByEmail(jwtRefreshReqDto.getEmail())
-                .orElseThrow(() -> new NoSuchDataException("email=" + jwtRefreshReqDto.getEmail()));
+                .orElseThrow(() -> new NoSuchDataException("email = " + jwtRefreshReqDto.getEmail()));
         checkIfRefreshTokenValid(user.getRefreshTokenValue(), jwtRefreshReqDto.getRefreshToken()); //유저의 실제 토큰과 클라이언트에서 넘어온 토큰
         String[] jwtTokens = createJwtTokens(user, user.getRoles());
         return buildJwtDto(user, jwtTokens);
@@ -98,8 +88,19 @@ public class UserService {
     private void checkIfRefreshTokenValid(String requiredValue, String givenRefreshToken) { //유효한지 확인
         String givenValue = String.valueOf(jwtTokenProvider.getClaimsFromJwtToken(givenRefreshToken).get("value"));
         if (!givenValue.equals(requiredValue)) {
-            System.out.println("나중에 예외 처리 추가 필요");
+            throw new InvalidReqParamException("Invalid refreshToken");
         }
+    }
+
+    /**
+     * logOut
+     * @param user
+     * @return UserDto
+     */
+    public UserDto logOut(User user){
+        user.setRefreshTokenValue(null);
+        userRepository.save(user);
+        return buildUserDtoFromUser(user);
     }
 
     private User buildUserFromUserJoinDto(UserJoinReqDto userJoinReqDto) { //기본 캐릭터 추가해야 함

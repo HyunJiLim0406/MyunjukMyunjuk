@@ -12,15 +12,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserJoinReqDto {
+@NotNull
+public class UserJoinReqDto{
 
-    @NotNull
     @Email
     private String email;
-
-    @NotNull
     private String password;
-
-    @NotNull
     private String nickname;
 }
