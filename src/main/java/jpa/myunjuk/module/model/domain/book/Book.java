@@ -36,5 +36,5 @@ public abstract class Book {
     @NotNull
     private Integer isbn;
 
-    private Integer price;
+    private Integer totPage;
 }
