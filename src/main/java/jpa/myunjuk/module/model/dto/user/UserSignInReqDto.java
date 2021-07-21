@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Builder
 @NotNull
-public class UserLogInReqDto {
+public class UserSignInReqDto {
 
     @Email
     private String email;
