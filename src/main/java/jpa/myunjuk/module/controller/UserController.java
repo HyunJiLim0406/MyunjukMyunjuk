@@ -2,8 +2,8 @@ package jpa.myunjuk.module.controller;
 
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.JwtRefreshReqDto;
-import jpa.myunjuk.module.model.dto.user.UserJoinReqDto;
-import jpa.myunjuk.module.model.dto.user.UserLogInReqDto;
+import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
+import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
 import jpa.myunjuk.module.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,24 +21,25 @@ public class UserController {
 
     /**
      * 회원가입
-     * localhost:8080/join
-     * @param userJoinReqDto
+     * localhost:8080/sign-up
+     * @param userSignUpReqDto
      * @return ResponseEntity
      */
-    @PostMapping("/join")
-    public ResponseEntity<?> join(@Valid @RequestBody UserJoinReqDto userJoinReqDto){
-        return new ResponseEntity<>(userService.join(userJoinReqDto), HttpStatus.OK);
+    @PostMapping("/sign-up")
+    public ResponseEntity<?> join(@Valid @RequestBody UserSignUpReqDto userSignUpReqDto){
+        userService.signUp(userSignUpReqDto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
      * 로그인
-     * localhost:8080/log-in
-     * @param userLogInReqDto
+     * localhost:8080/sign-in
+     * @param userSignInReqDto
      * @return ResponseEntity
      */
-    @PostMapping("/log-in")
-    public ResponseEntity<?> logIn(@Valid @RequestBody UserLogInReqDto userLogInReqDto){
-        return new ResponseEntity<>(userService.logIn(userLogInReqDto), HttpStatus.OK);
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> signIn(@Valid @RequestBody UserSignInReqDto userSignInReqDto){
+        return new ResponseEntity<>(userService.signIn(userSignInReqDto), HttpStatus.OK);
     }
 
     /**
@@ -54,12 +55,13 @@ public class UserController {
 
     /**
      * 로그아웃
-     * localhost:8080/log-out
+     * localhost:8080/sign-out
      * @param user
      * @return ResponseEntity
      */
-    @PostMapping("/log-out")
-    public ResponseEntity<?> logOut(@AuthenticationPrincipal User user){
-        return new ResponseEntity<>(userService.logOut(user), HttpStatus.OK);
+    @PostMapping("/sign-out")
+    public ResponseEntity<?> signOut(@AuthenticationPrincipal User user){
+        userService.signOut(user);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
