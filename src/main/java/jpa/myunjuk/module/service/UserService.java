@@ -7,9 +7,8 @@ import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.JwtDto;
 import jpa.myunjuk.module.model.dto.JwtRefreshReqDto;
-import jpa.myunjuk.module.model.dto.user.UserDto;
-import jpa.myunjuk.module.model.dto.user.UserJoinReqDto;
-import jpa.myunjuk.module.model.dto.user.UserLogInReqDto;
+import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
+import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
 import jpa.myunjuk.module.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,14 +27,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     /**
-     * join
-     * @param userJoinReqDto
-     * @return UserDto
+     * signUp
+     * @param userSignUpReqDto
+     * @return void
      */
-    public UserDto join(UserJoinReqDto userJoinReqDto) {
-        checkDuplicateUser(userJoinReqDto.getEmail());
-        User newUser = userRepository.save(buildUserFromUserJoinDto(userJoinReqDto));
-        return buildUserDtoFromUser(newUser);
+    public void signUp(UserSignUpReqDto userSignUpReqDto) {
+        checkDuplicateUser(userSignUpReqDto.getEmail());
+        userRepository.save(buildUserFromUserJoinDto(userSignUpReqDto));
     }
 
     private void checkDuplicateUser(String email) {
@@ -46,15 +44,15 @@ public class UserService {
     }
 
     /**
-     * logIn
-     * @param userLogInReqDto
+     * signIn
+     * @param userSignInReqDto
      * @return JwtDto
      */
-    public JwtDto logIn(UserLogInReqDto userLogInReqDto) {
-        User user = userRepository.findByEmail(userLogInReqDto.getEmail())
-                .orElseThrow(() -> new NoSuchDataException("email = " + userLogInReqDto.getEmail()));
-        if (!passwordEncoder.matches(userLogInReqDto.getPassword(), user.getPassword()))
-            throw new NoSuchDataException("password = " + userLogInReqDto.getPassword());
+    public JwtDto signIn(UserSignInReqDto userSignInReqDto) {
+        User user = userRepository.findByEmail(userSignInReqDto.getEmail())
+                .orElseThrow(() -> new NoSuchDataException("email = " + userSignInReqDto.getEmail()));
+        if (!passwordEncoder.matches(userSignInReqDto.getPassword(), user.getPassword()))
+            throw new NoSuchDataException("password = " + userSignInReqDto.getPassword());
         String[] jwtTokens = createJwtTokens(user, user.getRoles());
         return buildJwtDto(user, jwtTokens);
     }
@@ -93,31 +91,21 @@ public class UserService {
     }
 
     /**
-     * logOut
+     * signOut
      * @param user
      * @return UserDto
      */
-    public UserDto logOut(User user){
+    public void signOut(User user){
         user.setRefreshTokenValue(null);
         userRepository.save(user);
-        return buildUserDtoFromUser(user);
     }
 
-    private User buildUserFromUserJoinDto(UserJoinReqDto userJoinReqDto) { //기본 캐릭터 추가해야 함
+    private User buildUserFromUserJoinDto(UserSignUpReqDto userSignUpReqDto) { //기본 캐릭터 추가해야 함
         return User.builder()
-                .email(userJoinReqDto.getEmail())
-                .password(passwordEncoder.encode(userJoinReqDto.getPassword()))
-                .nickname(userJoinReqDto.getNickname())
+                .email(userSignUpReqDto.getEmail())
+                .password(passwordEncoder.encode(userSignUpReqDto.getPassword()))
+                .nickname(userSignUpReqDto.getNickname())
                 .roles(Collections.singletonList("ROLE_USER"))
-                .build();
-    }
-
-    private UserDto buildUserDtoFromUser(User user){
-        return UserDto.builder()
-                .userId(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .profileImg(user.getImg())
                 .build();
     }
 
