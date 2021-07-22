@@ -1,14 +1,9 @@
 package jpa.myunjuk.infra.exception;
 
-import lombok.Getter;
-
-public class InvalidReqParamException extends RuntimeException{
-
-    @Getter
-    private final String NAME;
+public class InvalidReqParamException extends CustomRuntimeException{
 
     public InvalidReqParamException(String msg){
         super(msg);
-        NAME = "InvalidReqParamException";
+        name = "InvalidReqParamException";
     }
 }

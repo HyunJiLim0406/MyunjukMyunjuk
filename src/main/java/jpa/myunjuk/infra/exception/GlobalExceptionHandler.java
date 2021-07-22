@@ -12,23 +12,16 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoSuchDataException.class)
-    public ResponseEntity<?> handleNoSuchDataException(final NoSuchDataException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
-    }
-
-    @ExceptionHandler(DuplicateUserException.class)
-    public ResponseEntity<?> handleDuplicateUserException(final DuplicateUserException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
-    }
-
-    @ExceptionHandler(InvalidReqParamException.class)
-    public ResponseEntity<?> handleInvalidReqParamException(final InvalidReqParamException e){
-        return ResponseEntity.badRequest().body(errorMsg(e.getNAME(), e.getMessage()));
+    @ExceptionHandler({
+            DuplicateUserException.class,
+            NoSuchDataException.class,
+            InvalidReqParamException.class})
+    public ResponseEntity<?> handleRuntimeExceptions(final CustomRuntimeException e) {
+        return ResponseEntity.badRequest().body(errorMsg(e.getName(), e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException e){
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));

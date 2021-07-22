@@ -1,14 +1,9 @@
 package jpa.myunjuk.infra.exception;
 
-import lombok.Getter;
-
-public class DuplicateUserException extends RuntimeException{
-
-    @Getter
-    private final String NAME;
+public class DuplicateUserException extends CustomRuntimeException{
 
     public DuplicateUserException(String msg){
         super(msg);
-        NAME = "DuplicateUserException";
+        name = "DuplicateUserException";
     }
 }
