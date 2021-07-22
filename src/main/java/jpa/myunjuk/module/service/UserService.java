@@ -7,10 +7,7 @@ import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.domain.UserCharacter;
-import jpa.myunjuk.module.model.dto.JwtDto;
-import jpa.myunjuk.module.model.dto.JwtRefreshReqDto;
-import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
-import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
+import jpa.myunjuk.module.model.dto.UserDtos;
 import jpa.myunjuk.module.repository.CharactersRepository;
 import jpa.myunjuk.module.repository.UserCharacterRepository;
 import jpa.myunjuk.module.repository.UserRepository;
@@ -22,6 +19,9 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static jpa.myunjuk.module.model.dto.JwtDtos.*;
+import static jpa.myunjuk.module.model.dto.UserDtos.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +37,13 @@ public class UserService {
      * signUp
      *
      * @param userSignUpReqDto
-     * @return void
+     * @return User
      */
     public User signUp(UserSignUpReqDto userSignUpReqDto) {
-        checkDuplicateUser(userSignUpReqDto.getEmail());
+        checkDuplicateUser(userSignUpReqDto.getEmail()); //중복 가입 체크
         Characters characters = charactersRepository.findById(1L).orElseThrow(() -> new NoSuchDataException("Missing default character"));
         User user = userRepository.save(buildUserFromUserJoinDto(userSignUpReqDto));
-        userCharacterRepository.save(UserCharacter.builder()
+        userCharacterRepository.save(UserCharacter.builder() //회원가입시 주어지는 기본캐릭터
                 .user(user)
                 .characters(characters)
                 .achieve(LocalDate.now())
@@ -119,7 +119,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private User buildUserFromUserJoinDto(UserSignUpReqDto userSignUpReqDto) { //기본 캐릭터 추가해야 함
+    private User buildUserFromUserJoinDto(UserSignUpReqDto userSignUpReqDto) {
         return User.builder()
                 .email(userSignUpReqDto.getEmail())
                 .password(passwordEncoder.encode(userSignUpReqDto.getPassword()))

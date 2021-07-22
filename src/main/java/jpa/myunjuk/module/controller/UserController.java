@@ -1,9 +1,6 @@
 package jpa.myunjuk.module.controller;
 
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.model.dto.JwtRefreshReqDto;
-import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
-import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
 import jpa.myunjuk.module.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +10,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static jpa.myunjuk.module.model.dto.JwtDtos.*;
+import static jpa.myunjuk.module.model.dto.UserDtos.*;
 
 @Slf4j
 @RequiredArgsConstructor

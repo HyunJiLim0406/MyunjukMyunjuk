@@ -1,8 +1,6 @@
 package jpa.myunjuk.module.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
-import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 
+import static jpa.myunjuk.module.model.dto.UserDtos.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
