@@ -1,4 +1,4 @@
-package jpa.myunjuk.module.model.dto.user;
+package jpa.myunjuk.module.model.dto;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,10 +11,11 @@ import javax.validation.ValidatorFactory;
 
 import java.util.Set;
 
+import static jpa.myunjuk.module.model.dto.UserDtos.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("User Sign-Up Validation Test")
-class UserSignUpReqDtoTest {
+@DisplayName("User Dtos Validation Test")
+class UserDtosTest {
 
     public static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     public static Validator validator = factory.getValidator();
@@ -26,7 +27,7 @@ class UserSignUpReqDtoTest {
     }
 
     @Test
-    @DisplayName("User Sign-Up Request | Fail : Email Null")
+    @DisplayName("User Sign-Up/In Request | Fail : Email Null")
     void emptyEmail(){
         UserSignUpReqDto user = UserSignUpReqDto.builder()
                 .password("1234")
@@ -37,7 +38,7 @@ class UserSignUpReqDtoTest {
     }
 
     @Test
-    @DisplayName("User Sign-Up Request | Fail : Invalid Email Format")
+    @DisplayName("User Sign-Up/In Request | Fail : Invalid Email Format")
     void invalidEmail(){
         UserSignUpReqDto user = UserSignUpReqDto.builder()
                 .email("wrong_format")
@@ -51,7 +52,7 @@ class UserSignUpReqDtoTest {
     }
 
     @Test
-    @DisplayName("User Sign-Up Request | Fail : Password Null")
+    @DisplayName("User Sign-Up/In Request | Fail : Password Null")
     void emptyPassword(){
         UserSignUpReqDto user = UserSignUpReqDto.builder()
                 .email("h@gmail.com")
