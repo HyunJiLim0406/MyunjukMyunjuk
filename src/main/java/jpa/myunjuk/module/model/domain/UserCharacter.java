@@ -46,6 +46,7 @@ public class UserCharacter {
         this.characters = characters;
         this.achieve = achieve;
         this.representation = representation;
-        user.getUserCharacters().add(this);
+        if (!user.getUserCharacters().contains(this))
+            user.getUserCharacters().add(this);
     }
 }

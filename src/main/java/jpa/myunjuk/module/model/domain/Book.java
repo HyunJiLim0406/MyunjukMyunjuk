@@ -18,6 +18,11 @@ public class Book {
     @GeneratedValue
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_sn")
+    @NotNull
+    private User user;
+
     @NotNull
     private String title;
 
