@@ -4,16 +4,21 @@ import jpa.myunjuk.infra.exception.DuplicateUserException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.infra.jwt.JwtTokenProvider;
+import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
+import jpa.myunjuk.module.model.domain.UserCharacter;
 import jpa.myunjuk.module.model.dto.JwtDto;
 import jpa.myunjuk.module.model.dto.JwtRefreshReqDto;
 import jpa.myunjuk.module.model.dto.user.UserSignUpReqDto;
 import jpa.myunjuk.module.model.dto.user.UserSignInReqDto;
+import jpa.myunjuk.module.repository.CharactersRepository;
+import jpa.myunjuk.module.repository.UserCharacterRepository;
 import jpa.myunjuk.module.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -25,15 +30,26 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final UserCharacterRepository userCharacterRepository;
+    private final CharactersRepository charactersRepository;
 
     /**
      * signUp
+     *
      * @param userSignUpReqDto
      * @return void
      */
-    public void signUp(UserSignUpReqDto userSignUpReqDto) {
+    public User signUp(UserSignUpReqDto userSignUpReqDto) {
         checkDuplicateUser(userSignUpReqDto.getEmail());
-        userRepository.save(buildUserFromUserJoinDto(userSignUpReqDto));
+        Characters characters = charactersRepository.findById(1L).orElseThrow(() -> new NoSuchDataException("Missing default character"));
+        User user = userRepository.save(buildUserFromUserJoinDto(userSignUpReqDto));
+        userCharacterRepository.save(UserCharacter.builder()
+                .user(user)
+                .characters(characters)
+                .achieve(LocalDate.now())
+                .representation(true)
+                .build());
+        return user;
     }
 
     private void checkDuplicateUser(String email) {
@@ -45,6 +61,7 @@ public class UserService {
 
     /**
      * signIn
+     *
      * @param userSignInReqDto
      * @return JwtDto
      */
@@ -72,10 +89,11 @@ public class UserService {
 
     /**
      * refreshToken
+     *
      * @param jwtRefreshReqDto
      * @return JwtDto
      */
-    public JwtDto refreshUserTokens(JwtRefreshReqDto jwtRefreshReqDto){
+    public JwtDto refreshUserTokens(JwtRefreshReqDto jwtRefreshReqDto) {
         User user = userRepository.findByEmail(jwtRefreshReqDto.getEmail())
                 .orElseThrow(() -> new NoSuchDataException("email = " + jwtRefreshReqDto.getEmail()));
         checkIfRefreshTokenValid(user.getRefreshTokenValue(), jwtRefreshReqDto.getRefreshToken()); //유저의 실제 토큰과 클라이언트에서 넘어온 토큰
@@ -92,10 +110,11 @@ public class UserService {
 
     /**
      * signOut
+     *
      * @param user
      * @return UserDto
      */
-    public void signOut(User user){
+    public void signOut(User user) {
         user.setRefreshTokenValue(null);
         userRepository.save(user);
     }
