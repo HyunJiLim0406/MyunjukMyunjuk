@@ -1,20 +1,17 @@
-package jpa.myunjuk.module.model.domain.book;
+package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public abstract class Book {
+@Builder
+public class Book {
 
     @Id
     @Column(name = "book_sn")
@@ -37,4 +34,18 @@ public abstract class Book {
     private Integer isbn;
 
     private Integer totPage;
+
+    @Enumerated(EnumType.STRING)
+    private BookStatus bookStatus;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    private Integer score;
+
+    private Integer readPage;
+
+    @Lob
+    private String expectation;
 }
