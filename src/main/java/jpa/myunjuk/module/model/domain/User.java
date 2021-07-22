@@ -39,6 +39,7 @@ public class User implements UserDetails {
     @Column(name = "user_img")
     private String img;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCharacter> userCharacters = new ArrayList<>();
 

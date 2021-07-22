@@ -2,19 +2,15 @@ package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
 import jpa.myunjuk.infra.converter.BooleanToYNConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserCharacter {
 
     @Id
@@ -38,4 +34,18 @@ public class UserCharacter {
     @Convert(converter = BooleanToYNConverter.class)
     @NotNull
     private boolean representation;
+
+    @Builder
+    public UserCharacter(Long id, User user, Characters characters, LocalDate achieve, boolean representation) {
+        Assert.notNull(user, "User must not be null");
+        Assert.notNull(characters, "Characters must not be null");
+        Assert.notNull(achieve, "Achieve must not be null");
+
+        this.id = id;
+        this.user = user;
+        this.characters = characters;
+        this.achieve = achieve;
+        this.representation = representation;
+        user.getUserCharacters().add(this);
+    }
 }

@@ -1,7 +1,6 @@
 package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
-import jpa.myunjuk.module.model.domain.book.Book;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
