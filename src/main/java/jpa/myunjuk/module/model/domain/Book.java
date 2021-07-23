@@ -40,6 +40,9 @@ public class Book {
 
     private Integer totPage;
 
+    @NotNull
+    private String url;
+
     @Enumerated(EnumType.STRING)
     private BookStatus bookStatus;
 
