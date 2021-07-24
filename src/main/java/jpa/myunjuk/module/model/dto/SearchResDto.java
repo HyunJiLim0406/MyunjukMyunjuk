@@ -5,20 +5,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SearchResDto {
 
-public class AladinApiDtos {
+    private Integer totalResults;
+    private Item[] items;
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @NotNull
-    public static class AladinSearchDto {
+    static class Item {
 
         private String title;
         private String author;
+        private String isbn;
         private String description;
-        private String img;
+        private String cover;
     }
 }
