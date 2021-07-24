@@ -7,7 +7,6 @@ import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.domain.UserCharacter;
-import jpa.myunjuk.module.model.dto.UserDtos;
 import jpa.myunjuk.module.repository.CharactersRepository;
 import jpa.myunjuk.module.repository.UserCharacterRepository;
 import jpa.myunjuk.module.repository.UserRepository;
