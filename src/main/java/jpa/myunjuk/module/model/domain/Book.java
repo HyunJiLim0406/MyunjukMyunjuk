@@ -26,6 +26,7 @@ public class Book {
     @NotNull
     private String title;
 
+    @Column(length = 300)
     private String thumbnail;
 
     private String author;
@@ -40,6 +41,7 @@ public class Book {
 
     private Integer totPage;
 
+    @Column(length = 300)
     @NotNull
     private String url;
 
