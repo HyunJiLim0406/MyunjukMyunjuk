@@ -1,87 +1,107 @@
 package jpa.myunjuk.module.service;
 
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import jpa.myunjuk.module.model.dto.SearchDto;
-import jpa.myunjuk.module.model.dto.SearchResDto;
+import jpa.myunjuk.infra.exception.InvalidReqParamException;
+import jpa.myunjuk.module.model.dto.search.SearchDetailDto;
+import jpa.myunjuk.module.model.dto.search.SearchDto;
+import jpa.myunjuk.module.model.dto.search.SearchResDto;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class SearchService {
 
-    @Value("${kakao.key}")
-    private String key;
-    @Value("${kakao.url}")
-    private String url;
+    @Value("${naver.id}")
+    private String id;
 
-//    private String url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbiw04061849001&QueryType=Title" +
-//            "&MaxResults=20&SearchTarget=Book&output=js&Version=20070901";
-//    private String url2 = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbiw04061849001&itemIdType=ISBN&ItemId=8983925566&output=js";
+    @Value("${naver.secret}")
+    private String secret;
 
-    public SearchDto search(String keyword, int page) {
+    @Value("${aladin.url}")
+    private String pageUrl;
+    private final String SEARCH_URL = "https://openapi.naver.com/v1/search/book.json?display=20";
+    private final String DETAIL_URL = "https://openapi.naver.com/v1/search/book_adv.json";
+
+    /**
+     * search
+     *
+     * @param keyword
+     * @param start
+     * @return SearchDto
+     */
+    public SearchDto search(String keyword, int start) {
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "KakaoAK " + key); //Authorization 설정
-        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders); //엔티티로 만들기
+        HttpEntity<String> httpEntity = getHttpEntity();
         URI targetUrl = UriComponentsBuilder
-                .fromUriString(url) //기본 url
-                .queryParam("query", keyword) //인자
-                .queryParam("page", page)
+                .fromUriString(SEARCH_URL)
+                .queryParam("query", keyword)
+                .queryParam("start", start)
                 .build()
-                .encode(StandardCharsets.UTF_8) //인코딩
+                .encode(StandardCharsets.UTF_8)
                 .toUri();
-
-        //GetForObject는 헤더를 정의할 수 없음
-        return restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, SearchDto.class).getBody(); //내용 반환
+        return restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, SearchDto.class).getBody();
     }
 
-//    public Map search(String keyword, int start) {
-//        RestTemplate restTemplate = getRestTemplate();
-//
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.TEXT_PLAIN);
-//        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
-//        URI targetUrl = UriComponentsBuilder
-//                .fromUriString(url2)
-////                .queryParam("Query", keyword)
-////                .queryParam("start", start)
-//                .build()
-//                .encode(StandardCharsets.UTF_8)
-//                .toUri();
-//        System.out.println(targetUrl);
-//        //System.out.println(restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, SearchResDto.class).getBody());
-//        Map body = restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class).getBody();
-//        Integer page = (Integer) ((HashMap) ((HashMap) ((List) body.get("item")).get(0)).get("bookinfo")).get("itemPage");
-//        System.out.println("page = " + page);
-//        return restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class).getBody();
-//    }
-//
-//    private RestTemplate getRestTemplate() {
-//        RestTemplate restTemplate = new RestTemplate();
-//        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
-//        messageConverters.add(converter);
-//        restTemplate.setMessageConverters(messageConverters);
-//        return restTemplate;
-//    }
+    /**
+     * searchDetail
+     *
+     * @param isbn
+     * @return SearchResDto
+     */
+    public SearchResDto searchDetail(String isbn) {
+        List<SearchDetailDto.Items> items = searchInfo(isbn).getItems();
+        if (searchInfo(isbn).getItems().isEmpty() || !Pattern.matches("^.{10}\\s.{13}$", isbn)) //검색 결과가 없거나, isbn 형식이 잘못됐을 때
+            throw new InvalidReqParamException("isbn = " + isbn);
+
+        SearchDetailDto.Items item = items.get(0);
+        String[] str = isbn.split(" ");
+        Integer page = pageInfo(str[1]); //13자리 isbn
+        return SearchResDto.builder()
+                .title(item.title)
+                .url(item.link)
+                .thumbnail(item.image)
+                .author(item.author)
+                .publisher(item.publisher)
+                .isbn(item.isbn)
+                .description(item.description)
+                .totPage(page)
+                .build();
+    }
+
+    private SearchDetailDto searchInfo(String isbn) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> httpEntity = getHttpEntity();
+        URI targetUrl = UriComponentsBuilder
+                .fromUriString(DETAIL_URL)
+                .queryParam("d_isbn", isbn)
+                .build()
+                .encode(StandardCharsets.UTF_8)
+                .toUri();
+        return restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, SearchDetailDto.class).getBody();
+    }
+
+    private Integer pageInfo(String isbn) {
+        RestTemplate restTemplate = new RestTemplate();
+        Map obj = restTemplate.getForObject(pageUrl, Map.class, isbn);
+        Integer page = null;
+        if (Objects.requireNonNull(obj).get("errorCode") == null) //페이지 정보가 있다면
+            page = (Integer) ((HashMap) ((HashMap) ((List) obj.get("item")).get(0)).get("subInfo")).get("itemPage");
+        return page;
+    }
+
+    private HttpEntity<String> getHttpEntity() { //헤더에 인증 정보 추가
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Naver-Client-Id", id);
+        httpHeaders.set("X-Naver-Client-Secret", secret);
+        return new HttpEntity<>(httpHeaders);
+    }
 }

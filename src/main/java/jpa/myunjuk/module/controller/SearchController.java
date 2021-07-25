@@ -18,14 +18,32 @@ public class SearchController {
 
     private final SearchService searchService;
 
+    /**
+     * 책 검색
+     * localhost:8080/search
+     *
+     * @param keyword
+     * @param start
+     * @return ResponseEntity
+     */
     @GetMapping("")
     public ResponseEntity<?> search(
             @RequestParam String keyword,
-            @RequestParam int start){
+            @RequestParam int start) {
         log.info("[Request] search");
         return new ResponseEntity<>(searchService.search(keyword, start), HttpStatus.OK);
     }
 
-//    @GetMapping("/detail")
-//    public ResponseEntity<?> searchDetail
+    /**
+     * 책 상세 정보
+     * localhost:8080/search/detail
+     *
+     * @param isbn
+     * @return ResponseEntity
+     */
+    @GetMapping("/detail")
+    public ResponseEntity<?> searchDetail(@RequestParam String isbn) {
+        log.info("[Request] search detail");
+        return new ResponseEntity<>(searchService.searchDetail(isbn), HttpStatus.OK);
+    }
 }
