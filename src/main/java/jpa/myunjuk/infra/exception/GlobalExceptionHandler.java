@@ -3,6 +3,7 @@ package jpa.myunjuk.infra.exception;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<?> handleReqParamExceptions(MissingServletRequestParameterException e){
+        return ResponseEntity.badRequest().body(errorMsg(e.getParameterName(), e.getMessage()));
     }
 
     private Map<String, String> errorMsg(String name, String msg) {
