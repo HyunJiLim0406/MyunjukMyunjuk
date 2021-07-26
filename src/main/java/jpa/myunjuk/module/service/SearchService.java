@@ -1,13 +1,18 @@
 package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
-import jpa.myunjuk.module.model.dto.search.SearchDetailDto;
-import jpa.myunjuk.module.model.dto.search.SearchDto;
-import jpa.myunjuk.module.model.dto.search.SearchResDto;
+import jpa.myunjuk.module.model.domain.Book;
+import jpa.myunjuk.module.model.domain.BookStatus;
+import jpa.myunjuk.module.model.domain.Characters;
+import jpa.myunjuk.module.model.domain.User;
+import jpa.myunjuk.module.model.dto.search.*;
+import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.CharactersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,9 +20,11 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SearchService {
 
     @Value("${naver.id}")
@@ -30,6 +37,10 @@ public class SearchService {
     private String pageUrl;
     private final String SEARCH_URL = "https://openapi.naver.com/v1/search/book.json?display=20";
     private final String DETAIL_URL = "https://openapi.naver.com/v1/search/book_adv.json";
+
+    private final BookRepository bookRepository;
+    private final CharactersRepository charactersRepository;
+    private final CharactersService charactersService;
 
     /**
      * search
@@ -103,5 +114,42 @@ public class SearchService {
         httpHeaders.set("X-Naver-Client-Id", id);
         httpHeaders.set("X-Naver-Client-Secret", secret);
         return new HttpEntity<>(httpHeaders);
+    }
+
+    public AddSearchDetailResDto addSearchDetail(User user, SearchReqDto searchReqDto) {
+        Book save = bookRepository.save(buildBookFromReq(user, searchReqDto));
+        AddSearchDetailResDto addSearchDetailResDto = null;
+
+        if (save.getBookStatus() == BookStatus.DONE) {
+            List<Characters> charactersList = charactersRepository.findByHeightLessThanEqual(user.bookHeight());
+            Characters added = charactersService.addNewCharacters(user, charactersList);
+            if(added!=null)
+                addSearchDetailResDto = AddSearchDetailResDto.builder()
+                        .id(added.getId())
+                        .name(added.getName())
+                        .img(added.getImg())
+                        .build();
+        }
+        return addSearchDetailResDto;
+    }
+
+    private Book buildBookFromReq(User user, SearchReqDto searchReqDto) {
+        return Book.builder()
+                .user(user)
+                .title(searchReqDto.getTitle())
+                .thumbnail(searchReqDto.getThumbnail())
+                .author(searchReqDto.getAuthor())
+                .publisher(searchReqDto.getPublisher())
+                .description(searchReqDto.getDescription())
+                .isbn(searchReqDto.getIsbn())
+                .totPage(searchReqDto.getTotPage())
+                .url(searchReqDto.getUrl())
+                .bookStatus(BookStatus.from(searchReqDto.getBookStatus()))
+                .startDate(searchReqDto.getStartDate())
+                .endDate(searchReqDto.getEndDate())
+                .score(searchReqDto.getScore())
+                .readPage(searchReqDto.getReadPage())
+                .expectation(searchReqDto.getExpectation())
+                .build();
     }
 }
