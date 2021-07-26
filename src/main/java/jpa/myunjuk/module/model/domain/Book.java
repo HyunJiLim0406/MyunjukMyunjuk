@@ -2,6 +2,7 @@ package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,8 +10,6 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Book {
 
     @Id
@@ -37,7 +36,7 @@ public class Book {
     private String description;
 
     @NotNull
-    private Integer isbn;
+    private String isbn;
 
     private Integer totPage;
 
@@ -58,4 +57,33 @@ public class Book {
 
     @Lob
     private String expectation;
+
+    @Builder
+    public Book(Long id, User user, String title, String thumbnail, String author, String publisher, String description,
+                String isbn, Integer totPage, String url, BookStatus bookStatus, LocalDate startDate, LocalDate endDate,
+                Integer score, Integer readPage, String expectation) {
+        Assert.notNull(user, "User must not be null");
+        Assert.notNull(title, "Title must not be null");
+        Assert.notNull(isbn, "Isbn must not be null");
+        Assert.notNull(url, "Url must not be null");
+
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.author = author;
+        this.publisher = publisher;
+        this.description = description;
+        this.isbn = isbn;
+        this.totPage = totPage;
+        this.url = url;
+        this.bookStatus = bookStatus;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.score = score;
+        this.readPage = readPage;
+        this.expectation = expectation;
+        if(!user.getBooks().contains(this))
+            user.getBooks().add(this);
+    }
 }
