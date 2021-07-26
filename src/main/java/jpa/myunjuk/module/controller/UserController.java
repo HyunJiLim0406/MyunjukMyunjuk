@@ -44,7 +44,7 @@ public class UserController {
      */
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@Valid @RequestBody UserSignInReqDto userSignInReqDto) {
-        log.info("[Request] sign-in " + userSignInReqDto.toString());
+        log.info("[Request] sign-in " + userSignInReqDto.getEmail());
         return new ResponseEntity<>(userService.signIn(userSignInReqDto), HttpStatus.OK);
     }
 

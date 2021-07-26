@@ -13,6 +13,7 @@ import jpa.myunjuk.module.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import static jpa.myunjuk.module.model.dto.UserDtos.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;

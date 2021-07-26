@@ -26,7 +26,7 @@ public class Characters {
     @NotNull
     private String img;
 
-    private Integer height;
+    private double height;
 
     @NotNull
     private LocalDate birthday;
