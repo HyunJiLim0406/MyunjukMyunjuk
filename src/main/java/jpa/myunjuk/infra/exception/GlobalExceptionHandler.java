@@ -7,6 +7,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleReqParamExceptions(MissingServletRequestParameterException e){
         return ResponseEntity.badRequest().body(errorMsg(e.getParameterName(), e.getMessage()));
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<?> handleDateTimeParseExceptions(DateTimeParseException e){
+        return ResponseEntity.badRequest().body(errorMsg(e.getParsedString(), e.getMessage()));
     }
 
     private Map<String, String> errorMsg(String name, String msg) {
