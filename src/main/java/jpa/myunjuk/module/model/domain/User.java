@@ -84,4 +84,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public double bookHeight() {
+        int height = 0;
+        for (Book book : books) {
+            if (book.getTotPage() != null)
+                height += book.getTotPage();
+        }
+        return height * 0.005;
+    }
 }
