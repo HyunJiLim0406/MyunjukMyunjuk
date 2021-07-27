@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,27 +22,32 @@ public class CharactersService {
     private final UserCharacterRepository userCharacterRepository;
     private final CharactersRepository charactersRepository;
 
-    public Characters addNewCharacters(User user, List<Characters> charactersList) {
-        double maxHeight = -1.0;
-        List<Characters> userCharacters = getCharactersFromUser(user);
-        for (Characters characters : charactersList) {
-            if (!userCharacters.contains(characters)) {
-                maxHeight = Math.max(maxHeight, characters.getHeight());
-                userCharacterRepository.save(UserCharacter.builder()
+    /**
+     * addNewCharacters
+     *
+     * @param user
+     * @return Characters
+     */
+    public Characters addNewCharacters(User user) {
+        List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotIn(user.bookHeight(), getCharactersFromUser(user)).stream()
+                .sorted(Comparator.comparing(Characters::getHeight).reversed())
+                .map(o -> UserCharacter.builder()
                         .user(user)
-                        .characters(characters)
+                        .characters(o)
                         .achieve(LocalDate.now())
                         .representation(false)
-                        .build());
-            }
+                        .build())
+                .collect(Collectors.toList());
+        if(!list.isEmpty()) {
+            userCharacterRepository.saveAll(list);
+            return list.get(0).getCharacters();
         }
-        return charactersRepository.findByHeight(maxHeight).orElse(null);
+        return null;
     }
 
-    private List<Characters> getCharactersFromUser(User user) {
-        List<Characters> result = new ArrayList<>();
-        for (UserCharacter userCharacter : user.getUserCharacters())
-            result.add(userCharacter.getCharacters());
-        return result;
+    private List<Long> getCharactersFromUser(User user) {
+        return user.getUserCharacters().stream()
+                .map(o -> o.getCharacters().getId())
+                .collect(Collectors.toList());
     }
 }

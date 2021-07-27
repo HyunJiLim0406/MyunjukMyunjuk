@@ -86,11 +86,9 @@ public class User implements UserDetails {
     }
 
     public double bookHeight() {
-        int height = 0;
-        for (Book book : books) {
-            if (book.getTotPage() != null)
-                height += book.getTotPage();
-        }
-        return height * 0.005;
+        return books.stream()
+                .filter(o -> o.getTotPage() != null)
+                .filter(o -> o.getBookStatus() == BookStatus.DONE)
+                .mapToInt(Book::getTotPage).sum() * 0.005;
     }
 }
