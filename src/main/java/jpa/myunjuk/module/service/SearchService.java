@@ -1,5 +1,7 @@
 package jpa.myunjuk.module.service;
 
+import jpa.myunjuk.infra.exception.DuplicateException;
+import jpa.myunjuk.infra.exception.InvalidReqBodyException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.BookStatus;
@@ -7,7 +9,6 @@ import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.search.*;
 import jpa.myunjuk.module.repository.BookRepository;
-import jpa.myunjuk.module.repository.CharactersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -18,13 +19,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class SearchService {
 
     @Value("${naver.id}")
@@ -39,7 +41,6 @@ public class SearchService {
     private final String DETAIL_URL = "https://openapi.naver.com/v1/search/book_adv.json";
 
     private final BookRepository bookRepository;
-    private final CharactersRepository charactersRepository;
     private final CharactersService charactersService;
 
     /**
@@ -116,14 +117,24 @@ public class SearchService {
         return new HttpEntity<>(httpHeaders);
     }
 
+    /**
+     * addSearchDetail
+     *
+     * @param user
+     * @param searchReqDto
+     * @return addSearchDetailResDto
+     */
+    @Transactional
     public AddSearchDetailResDto addSearchDetail(User user, SearchReqDto searchReqDto) {
-        Book save = bookRepository.save(buildBookFromReq(user, searchReqDto));
-        AddSearchDetailResDto addSearchDetailResDto = null;
+        checkDuplicateBook(user, searchReqDto.getIsbn()); //중복 저장 확인
+        validateDate(searchReqDto.getStartDate(), searchReqDto.getEndDate()); //날짜 선후관계 체크
+        validateReadPage(searchReqDto.getReadPage(), searchReqDto.getTotPage()); //읽은 쪽수, 전체 쪽수 대소관계 체크
 
-        if (save.getBookStatus() == BookStatus.DONE) {
-            List<Characters> charactersList = charactersRepository.findByHeightLessThanEqual(user.bookHeight());
-            Characters added = charactersService.addNewCharacters(user, charactersList);
-            if(added!=null)
+        Book save = bookRepository.save(buildBookFromReq(user, searchReqDto)); //책 저장
+        AddSearchDetailResDto addSearchDetailResDto = null;
+        if (save.getBookStatus() == BookStatus.DONE) { //저장할 책이 '읽은 책' 이라면
+            Characters added = charactersService.addNewCharacters(user); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
+            if (added != null)
                 addSearchDetailResDto = AddSearchDetailResDto.builder()
                         .id(added.getId())
                         .name(added.getName())
@@ -131,6 +142,23 @@ public class SearchService {
                         .build();
         }
         return addSearchDetailResDto;
+    }
+
+    private void checkDuplicateBook(User user, String isbn) {
+        if (user.getBooks().stream()
+                .map(Book::getIsbn)
+                .collect(Collectors.toList()).contains(isbn))
+            throw new DuplicateException("isbn = " + isbn);
+    }
+
+    private void validateReadPage(int readPage, Integer totPage) {
+        if (totPage != null && readPage > totPage)
+            throw new InvalidReqBodyException("page = " + readPage + " > " + totPage);
+    }
+
+    private void validateDate(LocalDate start, LocalDate end) {
+        if (end.isBefore(start))
+            throw new InvalidReqBodyException("date = " + start + " < " + end);
     }
 
     private Book buildBookFromReq(User user, SearchReqDto searchReqDto) {
