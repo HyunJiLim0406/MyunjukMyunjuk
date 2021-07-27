@@ -50,6 +50,13 @@ public class SearchController {
         return new ResponseEntity<>(searchService.searchDetail(isbn), HttpStatus.OK);
     }
 
+    /**
+     * 책 상제 정보 조회 후 저장
+     *
+     * @param user
+     * @param searchReqDto
+     * @return ResponseEntity
+     */
     @PostMapping("/detail")
     public ResponseEntity<?> searchDetail(@AuthenticationPrincipal User user, @Valid @RequestBody SearchReqDto searchReqDto) {
         log.info("[Request] Add book " + user.getEmail());

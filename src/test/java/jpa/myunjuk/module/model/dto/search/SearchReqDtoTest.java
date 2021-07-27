@@ -99,7 +99,7 @@ class SearchReqDtoTest {
                         .score(5)
                         .readPage(1)
                         .build());
-        assertThat(e.getMessage()).isEqualTo("Text '20210726' could not be parsed at index 0");
+        assertEquals("Text '20210726' could not be parsed at index 0", e.getMessage());
     }
 
     @Test

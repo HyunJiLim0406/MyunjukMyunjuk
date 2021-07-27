@@ -1,6 +1,6 @@
 package jpa.myunjuk.module.service;
 
-import jpa.myunjuk.infra.exception.DuplicateUserException;
+import jpa.myunjuk.infra.exception.DuplicateException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.infra.jwt.JwtTokenProvider;
@@ -56,7 +56,7 @@ public class UserService {
     private void checkDuplicateUser(String email) {
         userRepository.findByEmail(email)
                 .ifPresent(param -> {
-                    throw new DuplicateUserException("email = " + email);
+                    throw new DuplicateException("email = " + email);
                 });
     }
 
