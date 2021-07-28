@@ -19,7 +19,8 @@ public class GlobalExceptionHandler {
             DuplicateException.class,
             NoSuchDataException.class,
             InvalidReqParamException.class,
-            InvalidReqBodyException.class})
+            InvalidReqBodyException.class,
+            AccessDeniedException.class})
     public ResponseEntity<?> handleRuntimeExceptions(final CustomRuntimeException e) {
         return ResponseEntity.badRequest().body(errorMsg(e.getName(), e.getMessage()));
     }
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<?> handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<?> handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException e) {
         return ResponseEntity.badRequest().body(errorMsg("MethodArgumentTypeMismatchException", e.getMessage()));
     }
 
