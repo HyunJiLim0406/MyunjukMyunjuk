@@ -1,16 +1,18 @@
 package jpa.myunjuk.module.mapper.bookshelf;
 
-import jpa.myunjuk.module.mapper.GenericMapper;
 import jpa.myunjuk.module.model.domain.Book;
-import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
+import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.*;
 import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.*;
 
 @Mapper(componentModel = "spring")
-public interface BookshelfMapper extends GenericMapper<BookshelfResDtos, Book> {
+public interface BookshelfMapper {
+    BookshelfMapper INSTANCE = Mappers.getMapper(BookshelfMapper.class);
 
-    DoneBook toDoneBookDto(Book e);
-    ReadingBook toReadingBookDto(Book e);
-    WishBook toWishBookDto(Book e);
+    BookshelfInfoDto toDto(Book book);
+    DoneBook toDoneDto(Book book);
+    ReadingBook toReadingDto(Book book);
+    WishBook toWishDto(Book book);
 }

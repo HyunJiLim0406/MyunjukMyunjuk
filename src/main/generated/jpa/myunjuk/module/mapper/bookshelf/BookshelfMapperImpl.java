@@ -1,127 +1,106 @@
 package jpa.myunjuk.module.mapper.bookshelf;
 
-import java.time.LocalDate;
 import javax.annotation.processing.Generated;
 import jpa.myunjuk.module.model.domain.Book;
-import jpa.myunjuk.module.model.domain.BookStatus;
-import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfInfoDto;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfInfoDto.BookshelfInfoDtoBuilder;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.DoneBook;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.DoneBook.DoneBookBuilder;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.ReadingBook;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.ReadingBook.ReadingBookBuilder;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.WishBook;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.WishBook.WishBookBuilder;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-28T20:10:11+0900",
+    date = "2021-07-28T21:04:21+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
 public class BookshelfMapperImpl implements BookshelfMapper {
 
     @Override
-    public BookshelfResDtos toDto(Book e) {
-        if ( e == null ) {
+    public BookshelfInfoDto toDto(Book book) {
+        if ( book == null ) {
             return null;
         }
 
-        BookshelfResDtos bookshelfResDtos = new BookshelfResDtos();
+        BookshelfInfoDtoBuilder bookshelfInfoDto = BookshelfInfoDto.builder();
 
-        return bookshelfResDtos;
+        bookshelfInfoDto.id( book.getId() );
+        bookshelfInfoDto.description( book.getDescription() );
+        bookshelfInfoDto.publisher( book.getPublisher() );
+        bookshelfInfoDto.isbn( book.getIsbn() );
+        bookshelfInfoDto.totPage( book.getTotPage() );
+        bookshelfInfoDto.url( book.getUrl() );
+
+        return bookshelfInfoDto.build();
     }
 
     @Override
-    public Book toEntity(BookshelfResDtos d) {
-        if ( d == null ) {
+    public DoneBook toDoneDto(Book book) {
+        if ( book == null ) {
             return null;
         }
 
-        Long id = null;
-        User user = null;
-        String title = null;
-        String thumbnail = null;
-        String author = null;
-        String publisher = null;
-        String description = null;
-        String isbn = null;
-        Integer totPage = null;
-        String url = null;
-        BookStatus bookStatus = null;
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-        Integer score = null;
-        Integer readPage = null;
-        String expectation = null;
+        DoneBookBuilder doneBook = DoneBook.builder();
 
-        Book book = new Book( id, user, title, thumbnail, author, publisher, description, isbn, totPage, url, bookStatus, startDate, endDate, score, readPage, expectation );
-
-        return book;
-    }
-
-    @Override
-    public void updateFromDto(BookshelfResDtos dto, Book entity) {
-        if ( dto == null ) {
-            return;
+        doneBook.id( book.getId() );
+        doneBook.title( book.getTitle() );
+        doneBook.author( book.getAuthor() );
+        doneBook.thumbnail( book.getThumbnail() );
+        doneBook.bookStatus( book.getBookStatus() );
+        doneBook.startDate( book.getStartDate() );
+        doneBook.endDate( book.getEndDate() );
+        if ( book.getScore() != null ) {
+            doneBook.score( book.getScore() );
         }
+
+        return doneBook.build();
     }
 
     @Override
-    public DoneBook toDoneBookDto(Book e) {
-        if ( e == null ) {
+    public ReadingBook toReadingDto(Book book) {
+        if ( book == null ) {
             return null;
         }
 
-        Long id = null;
-        String title = null;
-        String author = null;
-        String thumbnail = null;
-        BookStatus bookStatus = null;
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-        int score = 0;
+        ReadingBookBuilder readingBook = ReadingBook.builder();
 
-        DoneBook doneBook = new DoneBook( id, title, author, thumbnail, bookStatus, startDate, endDate, score );
+        readingBook.id( book.getId() );
+        readingBook.title( book.getTitle() );
+        readingBook.author( book.getAuthor() );
+        readingBook.thumbnail( book.getThumbnail() );
+        readingBook.bookStatus( book.getBookStatus() );
+        readingBook.startDate( book.getStartDate() );
+        if ( book.getReadPage() != null ) {
+            readingBook.readPage( book.getReadPage() );
+        }
+        readingBook.totPage( book.getTotPage() );
 
-        return doneBook;
+        return readingBook.build();
     }
 
     @Override
-    public ReadingBook toReadingBookDto(Book e) {
-        if ( e == null ) {
+    public WishBook toWishDto(Book book) {
+        if ( book == null ) {
             return null;
         }
 
-        Long id = null;
-        String title = null;
-        String author = null;
-        String thumbnail = null;
-        BookStatus bookStatus = null;
-        LocalDate startDate = null;
-        int readPage = 0;
-        Integer totPage = null;
+        WishBookBuilder wishBook = WishBook.builder();
 
-        ReadingBook readingBook = new ReadingBook( id, title, author, thumbnail, bookStatus, startDate, readPage, totPage );
-
-        return readingBook;
-    }
-
-    @Override
-    public WishBook toWishBookDto(Book e) {
-        if ( e == null ) {
-            return null;
+        wishBook.id( book.getId() );
+        wishBook.title( book.getTitle() );
+        wishBook.author( book.getAuthor() );
+        wishBook.thumbnail( book.getThumbnail() );
+        wishBook.bookStatus( book.getBookStatus() );
+        wishBook.totPage( book.getTotPage() );
+        if ( book.getScore() != null ) {
+            wishBook.score( book.getScore() );
         }
+        wishBook.expectation( book.getExpectation() );
 
-        Long id = null;
-        String title = null;
-        String author = null;
-        String thumbnail = null;
-        BookStatus bookStatus = null;
-        Integer totPage = null;
-        int score = 0;
-        String expectation = null;
-
-        WishBook wishBook = new WishBook( id, title, author, thumbnail, bookStatus, totPage, score, expectation );
-
-        return wishBook;
+        return wishBook.build();
     }
 }

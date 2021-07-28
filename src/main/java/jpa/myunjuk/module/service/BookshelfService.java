@@ -43,11 +43,11 @@ public class BookshelfService {
                 .filter(o -> bookStatus == null || o.getBookStatus() == BookStatus.from(bookStatus)) //검색 조건 필터링
                 .forEach(o -> {
                     if (o.getBookStatus() == BookStatus.DONE)
-                        bookList.add(bookshelfMapper.toDoneBookDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toDoneDto(o));
                     if (o.getBookStatus() == BookStatus.READING)
-                        bookList.add(bookshelfMapper.toReadingBookDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toReadingDto(o));
                     if (o.getBookStatus() == BookStatus.WISH)
-                        bookList.add(bookshelfMapper.toWishBookDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toWishDto(o));
                 });
         return bookList;
     }
@@ -69,14 +69,7 @@ public class BookshelfService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new NoSuchDataException("Book id = " + id));
         checkUser(user, book);
-        return BookshelfInfoDto.builder()
-                .id(book.getId())
-                .description(book.getDescription())
-                .publisher(book.getPublisher())
-                .isbn(book.getIsbn())
-                .totPage(book.getTotPage())
-                .url(book.getUrl())
-                .build();
+        return bookshelfMapper.INSTANCE.toDto(book);
     }
 
     private void checkUser(User user, Book book) {
