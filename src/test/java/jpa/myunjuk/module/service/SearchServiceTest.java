@@ -6,7 +6,6 @@ import jpa.myunjuk.module.model.domain.*;
 import jpa.myunjuk.module.model.dto.search.SearchReqDto;
 import jpa.myunjuk.module.repository.CharactersRepository;
 import jpa.myunjuk.module.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -101,11 +102,16 @@ class SearchServiceTest {
         SearchReqDto searchReqDto1 = getSearchReqDto("done", "2021-07-26", 1000, 11);
         SearchReqDto searchReqDto2 = getSearchReqDto("reading", "2021-07-26", 1001, 10);
 
-        DuplicateException e = assertThrows(DuplicateException.class, () -> {
-            searchService.addSearchDetail(user, searchReqDto1);
-            searchService.addSearchDetail(user, searchReqDto2);
-        });
-        assertEquals("isbn = 1234567890 1234567890123", e.getMessage());
+        searchService.addSearchDetail(user, searchReqDto1);
+        List<Long> saved = user.getBooks().stream()
+                .filter(o -> o.getIsbn().equals("1234567890 1234567890123"))
+                .map(Book::getId)
+                .collect(Collectors.toList());
+        assertEquals(1, saved.size());
+
+        DuplicateException e = assertThrows(DuplicateException.class, () ->
+                searchService.addSearchDetail(user, searchReqDto2));
+        assertEquals("Book id = " + saved.get(0), e.getMessage());
     }
 
     private SearchReqDto getSearchReqDto(String bookStatus, String endDate, Integer totPage, int readPage) {

@@ -145,10 +145,13 @@ public class SearchService {
     }
 
     private void checkDuplicateBook(User user, String isbn) {
-        if (user.getBooks().stream()
-                .map(Book::getIsbn)
-                .collect(Collectors.toList()).contains(isbn))
-            throw new DuplicateException("isbn = " + isbn);
+        if (!(user.getBooks().stream()
+                .filter(o -> o.getIsbn().equals(isbn))
+                .map(Book::getId).count() == 0))
+            throw new DuplicateException("Book id = " + user.getBooks().stream()
+                    .filter(o -> o.getIsbn().equals(isbn))
+                    .map(Book::getId)
+                    .collect(Collectors.toList()).get(0));
     }
 
     private void validateReadPage(int readPage, Integer totPage) {
