@@ -23,7 +23,7 @@ public class SearchController {
 
     /**
      * 책 검색
-     * localhost:8080/search
+     * localhost:8080/search?keyword=해리포터&start=1
      *
      * @param keyword
      * @param start
@@ -39,7 +39,7 @@ public class SearchController {
 
     /**
      * 책 상세 정보
-     * localhost:8080/search/detail
+     * localhost:8080/search/detail?isbn=1234567890 1234567890123
      *
      * @param isbn
      * @return ResponseEntity
@@ -52,6 +52,7 @@ public class SearchController {
 
     /**
      * 책 상제 정보 조회 후 저장
+     * localhost:8080/search/detail
      *
      * @param user
      * @param searchReqDto
