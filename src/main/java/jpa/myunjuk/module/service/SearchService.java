@@ -42,6 +42,7 @@ public class SearchService {
 
     private final BookRepository bookRepository;
     private final CharactersService charactersService;
+    private final CommonService commonService;
 
     /**
      * search
@@ -127,21 +128,20 @@ public class SearchService {
     @Transactional
     public AddSearchDetailResDto addSearchDetail(User user, SearchReqDto searchReqDto) {
         checkDuplicateBook(user, searchReqDto.getIsbn()); //중복 저장 확인
-        validateDate(searchReqDto.getStartDate(), searchReqDto.getEndDate()); //날짜 선후관계 체크
-        validateReadPage(searchReqDto.getReadPage(), searchReqDto.getTotPage()); //읽은 쪽수, 전체 쪽수 대소관계 체크
+        commonService.validateDate(searchReqDto.getStartDate(), searchReqDto.getEndDate()); //날짜 선후관계 체크
+        commonService.validateReadPage(searchReqDto.getReadPage(), searchReqDto.getTotPage()); //읽은 쪽수, 전체 쪽수 대소관계 체크
 
         Book save = bookRepository.save(buildBookFromReq(user, searchReqDto)); //책 저장
-        AddSearchDetailResDto addSearchDetailResDto = null;
         if (save.getBookStatus() == BookStatus.DONE) { //저장할 책이 '읽은 책' 이라면
             Characters added = charactersService.addNewCharacters(user); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
             if (added != null)
-                addSearchDetailResDto = AddSearchDetailResDto.builder()
+                return AddSearchDetailResDto.builder()
                         .id(added.getId())
                         .name(added.getName())
                         .img(added.getImg())
                         .build();
         }
-        return addSearchDetailResDto;
+        return null;
     }
 
     private void checkDuplicateBook(User user, String isbn) {
@@ -152,16 +152,6 @@ public class SearchService {
                     .filter(o -> o.getIsbn().equals(isbn))
                     .map(Book::getId)
                     .collect(Collectors.toList()).get(0));
-    }
-
-    private void validateReadPage(int readPage, Integer totPage) {
-        if (totPage != null && readPage > totPage)
-            throw new InvalidReqBodyException("page = " + readPage + " > " + totPage);
-    }
-
-    private void validateDate(LocalDate start, LocalDate end) {
-        if (end.isBefore(start))
-            throw new InvalidReqBodyException("date = " + start + " < " + end);
     }
 
     private Book buildBookFromReq(User user, SearchReqDto searchReqDto) {
