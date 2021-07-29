@@ -2,8 +2,11 @@ package jpa.myunjuk.module.mapper.bookshelf;
 
 import javax.annotation.processing.Generated;
 import jpa.myunjuk.module.model.domain.Book;
+import jpa.myunjuk.module.model.domain.Memo;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfInfoDto;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfInfoDto.BookshelfInfoDtoBuilder;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfMemoResDto;
+import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.BookshelfMemoResDto.BookshelfMemoResDtoBuilder;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.DoneBook;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.DoneBook.DoneBookBuilder;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.ReadingBook;
@@ -14,32 +17,14 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-28T21:04:21+0900",
+    date = "2021-07-29T16:27:42+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
 public class BookshelfMapperImpl implements BookshelfMapper {
 
     @Override
-    public BookshelfInfoDto toDto(Book book) {
-        if ( book == null ) {
-            return null;
-        }
-
-        BookshelfInfoDtoBuilder bookshelfInfoDto = BookshelfInfoDto.builder();
-
-        bookshelfInfoDto.id( book.getId() );
-        bookshelfInfoDto.description( book.getDescription() );
-        bookshelfInfoDto.publisher( book.getPublisher() );
-        bookshelfInfoDto.isbn( book.getIsbn() );
-        bookshelfInfoDto.totPage( book.getTotPage() );
-        bookshelfInfoDto.url( book.getUrl() );
-
-        return bookshelfInfoDto.build();
-    }
-
-    @Override
-    public DoneBook toDoneDto(Book book) {
+    public DoneBook toDto(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -61,7 +46,47 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public ReadingBook toReadingDto(Book book) {
+    public BookshelfInfoDto bookToBookshelfInfoDto(Book book) {
+        if ( book == null ) {
+            return null;
+        }
+
+        BookshelfInfoDtoBuilder bookshelfInfoDto = BookshelfInfoDto.builder();
+
+        bookshelfInfoDto.id( book.getId() );
+        bookshelfInfoDto.description( book.getDescription() );
+        bookshelfInfoDto.publisher( book.getPublisher() );
+        bookshelfInfoDto.isbn( book.getIsbn() );
+        bookshelfInfoDto.totPage( book.getTotPage() );
+        bookshelfInfoDto.url( book.getUrl() );
+
+        return bookshelfInfoDto.build();
+    }
+
+    @Override
+    public DoneBook bookToDoneBook(Book book) {
+        if ( book == null ) {
+            return null;
+        }
+
+        DoneBookBuilder doneBook = DoneBook.builder();
+
+        doneBook.id( book.getId() );
+        doneBook.title( book.getTitle() );
+        doneBook.author( book.getAuthor() );
+        doneBook.thumbnail( book.getThumbnail() );
+        doneBook.bookStatus( book.getBookStatus() );
+        doneBook.startDate( book.getStartDate() );
+        doneBook.endDate( book.getEndDate() );
+        if ( book.getScore() != null ) {
+            doneBook.score( book.getScore() );
+        }
+
+        return doneBook.build();
+    }
+
+    @Override
+    public ReadingBook bookToReadingBook(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -83,7 +108,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public WishBook toWishDto(Book book) {
+    public WishBook bookToWishBook(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -102,5 +127,20 @@ public class BookshelfMapperImpl implements BookshelfMapper {
         wishBook.expectation( book.getExpectation() );
 
         return wishBook.build();
+    }
+
+    @Override
+    public BookshelfMemoResDto memoToBookshelfMemoResDto(Memo memo) {
+        if ( memo == null ) {
+            return null;
+        }
+
+        BookshelfMemoResDtoBuilder bookshelfMemoResDto = BookshelfMemoResDto.builder();
+
+        bookshelfMemoResDto.id( memo.getId() );
+        bookshelfMemoResDto.content( memo.getContent() );
+        bookshelfMemoResDto.saved( memo.getSaved() );
+
+        return bookshelfMemoResDto.build();
     }
 }
