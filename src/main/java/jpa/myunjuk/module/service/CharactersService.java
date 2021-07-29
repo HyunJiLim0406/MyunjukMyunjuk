@@ -38,11 +38,27 @@ public class CharactersService {
                         .representation(false)
                         .build())
                 .collect(Collectors.toList());
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             userCharacterRepository.saveAll(list);
             return list.get(0).getCharacters();
         }
         return null;
+    }
+
+    /**
+     * removeCharacters
+     *
+     * @param user
+     */
+    public void removeCharacters(User user) {
+        double height = user.bookHeight();
+        List<UserCharacter> list = user.getUserCharacters().stream()
+                .filter(o -> o.getCharacters().getHeight() > height)
+                .collect(Collectors.toList());
+        if (list.isEmpty())
+            return;
+        user.getUserCharacters().removeAll(list);
+        userCharacterRepository.deleteAll(list);
     }
 
     private List<Long> getCharactersFromUser(User user) {

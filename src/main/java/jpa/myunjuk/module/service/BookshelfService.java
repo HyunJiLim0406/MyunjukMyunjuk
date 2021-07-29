@@ -1,12 +1,9 @@
 package jpa.myunjuk.module.service;
 
-import jpa.myunjuk.infra.exception.AccessDeniedException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
-import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
-import jpa.myunjuk.module.model.domain.Book;
-import jpa.myunjuk.module.model.domain.BookStatus;
-import jpa.myunjuk.module.model.domain.User;
+import jpa.myunjuk.module.model.domain.*;
+import jpa.myunjuk.module.model.dto.search.AddSearchDetailResDto;
 import jpa.myunjuk.module.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,8 @@ public class BookshelfService {
 
     private final BookRepository bookRepository;
     private final BookshelfMapper bookshelfMapper;
+    private final CharactersService charactersService;
+    private final CommonService commonService;
 
     /**
      * bookShelf
@@ -43,11 +42,11 @@ public class BookshelfService {
                 .filter(o -> bookStatus == null || o.getBookStatus() == BookStatus.from(bookStatus)) //검색 조건 필터링
                 .forEach(o -> {
                     if (o.getBookStatus() == BookStatus.DONE)
-                        bookList.add(bookshelfMapper.INSTANCE.toDoneDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.bookToDoneBook(o));
                     if (o.getBookStatus() == BookStatus.READING)
-                        bookList.add(bookshelfMapper.INSTANCE.toReadingDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.bookToReadingBook(o));
                     if (o.getBookStatus() == BookStatus.WISH)
-                        bookList.add(bookshelfMapper.INSTANCE.toWishDto(o));
+                        bookList.add(bookshelfMapper.INSTANCE.bookToWishBook(o));
                 });
         return bookList;
     }
@@ -59,21 +58,65 @@ public class BookshelfService {
     }
 
     /**
-     * bookshelfDetailInfo
+     * bookshelfUpdate
+     *
+     * @param user
+     * @param id
+     * @param req
+     * @return AddSearchDetailResDto
+     */
+    @Transactional
+    public AddSearchDetailResDto bookshelfUpdate(User user, Long id, BookshelfUpdateReqDto req) {
+        Book book = commonService.getBook(user, id);
+        commonService.validateReadPage(req.getReadPage(), book.getTotPage());
+        commonService.validateDate(req.getStartDate(), req.getEndDate());
+        BookStatus before = book.getBookStatus(), after = BookStatus.from(req.getBookStatus());
+
+        book.updateBookStatus(BookStatus.from(req.getBookStatus()), req.getStartDate(), req.getEndDate(),
+                req.getScore(), req.getReadPage(), req.getExpectation());
+        bookRepository.save(book);
+
+        //책 상태의 변화에 따라 캐릭터를 추가 or 삭제
+        if (before == BookStatus.DONE && after != BookStatus.DONE)
+            charactersService.removeCharacters(user);
+        if (before != BookStatus.DONE && after == BookStatus.DONE) {
+            Characters added = charactersService.addNewCharacters(user);
+            if (added != null)
+                return AddSearchDetailResDto.builder()
+                        .id(added.getId())
+                        .name(added.getName())
+                        .img(added.getImg())
+                        .build();
+        }
+        return null;
+    }
+
+    /**
+     * bookshelfDelete
+     *
+     * @param user
+     * @param id
+     */
+    @Transactional
+    public void bookshelfDelete(User user, Long id) {
+        Book book = commonService.getBook(user, id);
+
+        BookStatus bookStatus = book.getBookStatus();
+        user.getBooks().remove(book);
+        bookRepository.delete(book);
+        if (bookStatus == BookStatus.DONE) //삭제된 책이 읽은 책이라면
+            charactersService.removeCharacters(user);
+    }
+
+    /**
+     * bookshelfInfo
      *
      * @param user
      * @param id
      * @return BookshelfInfoDto
      */
-    public BookshelfInfoDto bookshelfDetailInfo(User user, Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new NoSuchDataException("Book id = " + id));
-        checkUser(user, book);
-        return bookshelfMapper.INSTANCE.toDto(book);
-    }
-
-    private void checkUser(User user, Book book) {
-        if (!book.getUser().equals(user))
-            throw new AccessDeniedException("Book id = " + book.getId());
+    public BookshelfInfoDto bookshelfInfo(User user, Long id) {
+        Book book = commonService.getBook(user, id);
+        return bookshelfMapper.INSTANCE.bookToBookshelfInfoDto(book);
     }
 }
