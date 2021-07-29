@@ -15,6 +15,7 @@ public class Memo {
 
     @Id
     @Column(name = "memo_sn")
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,4 +29,8 @@ public class Memo {
 
     @NotNull
     private LocalDateTime saved;
+
+    public void updateMemo(String content){
+        this.content = content;
+    }
 }

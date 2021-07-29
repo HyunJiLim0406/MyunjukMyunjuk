@@ -86,4 +86,15 @@ public class Book {
         if(!user.getBooks().contains(this))
             user.getBooks().add(this);
     }
+
+    public void updateBookStatus(BookStatus bookStatus, LocalDate startDate, LocalDate endDate,
+                                 Integer score, Integer readPage, String expectation){
+
+        this.bookStatus = bookStatus;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.score = score;
+        this.readPage = readPage;
+        this.expectation = expectation;
+    }
 }
