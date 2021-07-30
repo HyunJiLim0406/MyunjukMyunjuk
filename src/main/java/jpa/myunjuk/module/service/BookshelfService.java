@@ -2,12 +2,14 @@ package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
+import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
 import jpa.myunjuk.module.model.domain.*;
 import jpa.myunjuk.module.model.dto.search.AddSearchDetailResDto;
 import jpa.myunjuk.module.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ public class BookshelfService {
     private final BookshelfMapper bookshelfMapper;
     private final CharactersService charactersService;
     private final CommonService commonService;
+    private final CharactersMapper charactersMapper;
 
     /**
      * bookShelf
@@ -79,15 +82,8 @@ public class BookshelfService {
         //책 상태의 변화에 따라 캐릭터를 추가 or 삭제
         if (before == BookStatus.DONE && after != BookStatus.DONE)
             charactersService.removeCharacters(user);
-        if (before != BookStatus.DONE && after == BookStatus.DONE) {
-            Characters added = charactersService.addNewCharacters(user);
-            if (added != null)
-                return AddSearchDetailResDto.builder()
-                        .id(added.getId())
-                        .name(added.getName())
-                        .img(added.getImg())
-                        .build();
-        }
+        if (before != BookStatus.DONE && after == BookStatus.DONE)
+            return charactersMapper.toDto(charactersService.addNewCharacters(user));
         return null;
     }
 
@@ -118,5 +114,9 @@ public class BookshelfService {
     public BookshelfInfoDto bookshelfInfo(User user, Long id) {
         Book book = commonService.getBook(user, id);
         return bookshelfMapper.INSTANCE.bookToBookshelfInfoDto(book);
+    }
+
+    public void bookshelfUpdateInfo(User user, Long id, MultipartFile file, BookshelfInfoUpdateReqDto req){
+
     }
 }

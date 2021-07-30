@@ -3,6 +3,7 @@ package jpa.myunjuk.module.service;
 import jpa.myunjuk.infra.exception.DuplicateException;
 import jpa.myunjuk.infra.exception.InvalidReqBodyException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
+import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.BookStatus;
 import jpa.myunjuk.module.model.domain.Characters;
@@ -43,6 +44,7 @@ public class SearchService {
     private final BookRepository bookRepository;
     private final CharactersService charactersService;
     private final CommonService commonService;
+    private final CharactersMapper charactersMapper;
 
     /**
      * search
@@ -132,15 +134,8 @@ public class SearchService {
         commonService.validateReadPage(searchReqDto.getReadPage(), searchReqDto.getTotPage()); //읽은 쪽수, 전체 쪽수 대소관계 체크
 
         Book save = bookRepository.save(buildBookFromReq(user, searchReqDto)); //책 저장
-        if (save.getBookStatus() == BookStatus.DONE) { //저장할 책이 '읽은 책' 이라면
-            Characters added = charactersService.addNewCharacters(user); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
-            if (added != null)
-                return AddSearchDetailResDto.builder()
-                        .id(added.getId())
-                        .name(added.getName())
-                        .img(added.getImg())
-                        .build();
-        }
+        if (save.getBookStatus() == BookStatus.DONE)  //저장할 책이 '읽은 책' 이라면
+            return charactersMapper.toDto(charactersService.addNewCharacters(user)); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
         return null;
     }
 
