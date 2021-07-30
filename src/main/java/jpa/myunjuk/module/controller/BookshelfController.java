@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -38,7 +39,10 @@ public class BookshelfController {
     public ResponseEntity<?> bookshelf(@AuthenticationPrincipal User user,
                                        @RequestParam(required = false) String bookStatus) {
         log.info("[Request] Retrieve all books " + user.getEmail());
-        return new ResponseEntity<>(bookshelfService.bookshelf(user, bookStatus), HttpStatus.OK);
+        List<Object> result = bookshelfService.bookshelf(user, bookStatus);
+        if (result.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
@@ -71,7 +75,7 @@ public class BookshelfController {
      */
     @DeleteMapping("/{bookId}")
     public ResponseEntity<?> bookshelf(@AuthenticationPrincipal User user,
-                                       @PathVariable Long bookId){
+                                       @PathVariable Long bookId) {
         log.info("[Request] Delete book " + bookId);
         bookshelfService.bookshelfDelete(user, bookId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -91,4 +95,13 @@ public class BookshelfController {
         log.info("[Request] Retrieve one book info " + bookId);
         return new ResponseEntity<>(bookshelfService.bookshelfInfo(user, bookId), HttpStatus.OK);
     }
+
+//    @PutMapping("/info/{bookId}")
+//    public ResponseEntity<?> bookshelfInfo(@AuthenticationPrincipal User user,
+//                                           @PathVariable Long bookId,
+//                                           @RequestPart MultipartFile thumbnail,
+//                                           @Valid @RequestBody BookshelfInfoUpdateReqDto bookshelfInfoUpdateReqDto) {
+//        log.info("[Request] Update book info " + bookId);
+//
+//    }
 }

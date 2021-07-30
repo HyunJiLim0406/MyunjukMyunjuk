@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -58,6 +59,20 @@ public class BookshelfDetailDtos {
         private String isbn;
         private Integer totPage;
         private String url;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @NotNull
+    public static class BookshelfInfoUpdateReqDto {
+
+        private String title;
+        private String author;
+        private String publisher;
+        private String isbn;
+        private Integer totPage;
     }
 
     @Getter
