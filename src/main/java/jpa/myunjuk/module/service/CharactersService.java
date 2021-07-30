@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +28,7 @@ public class CharactersService {
      * @return Characters
      */
     public Characters addNewCharacters(User user) {
-        List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotIn(user.bookHeight(), getCharactersFromUser(user)).stream()
-                .sorted(Comparator.comparing(Characters::getHeight).reversed())
+        List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(user.bookHeight(), getCharactersFromUser(user)).stream()
                 .map(o -> UserCharacter.builder()
                         .user(user)
                         .characters(o)

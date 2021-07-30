@@ -50,7 +50,6 @@ public class BookshelfResDtos {
         private String expectation;
 
         @Builder
-
         public WishBook(Long id, String title, String author, String thumbnail, BookStatus bookStatus,
                         Integer totPage, int score, String expectation) {
             super(id, title, author, thumbnail, bookStatus);

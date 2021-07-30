@@ -5,8 +5,6 @@ import jpa.myunjuk.module.model.domain.Memo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
 import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.*;
 import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.*;
 

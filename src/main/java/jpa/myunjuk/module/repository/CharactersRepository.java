@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CharactersRepository extends JpaRepository<Characters, Long> {
-    List<Characters> findByHeightLessThanEqualAndIdNotIn(double height, List<Long> id);
+    List<Characters> findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(double height, List<Long> id);
 }

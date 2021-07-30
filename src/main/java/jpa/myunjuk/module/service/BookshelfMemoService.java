@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,7 +33,7 @@ public class BookshelfMemoService {
      * @param id
      * @return List<BookshelfMemoResDto>
      */
-    public List<BookshelfDetailDtos.BookshelfMemoResDto> bookshelfMemo(User user, Long id) {
+    public List<BookshelfMemoResDto> bookshelfMemo(User user, Long id) {
         Book book = commonService.getBook(user, id);
         return memoRepository.findAllByBookOrderBySavedDesc(book).stream()
                 .map(bookshelfMapper.INSTANCE::memoToBookshelfMemoResDto)
@@ -46,7 +48,7 @@ public class BookshelfMemoService {
      * @return Memo
      */
     @Transactional
-    public Memo bookshelfAddMemo(User user, BookshelfDetailDtos.BookshelfMemoReqDto bookshelfMemoReqDto) {
+    public Memo bookshelfAddMemo(User user, BookshelfMemoReqDto bookshelfMemoReqDto) {
         Book book = commonService.getBook(user, bookshelfMemoReqDto.getId());
         return memoRepository.save(Memo.builder()
                 .book(book)
@@ -63,7 +65,7 @@ public class BookshelfMemoService {
      * @param bookshelfUpdateMemoReqDto
      */
     @Transactional
-    public void bookshelfUpdateMemo(User user, Long id, BookshelfDetailDtos.BookshelfUpdateMemoReqDto bookshelfUpdateMemoReqDto) {
+    public void bookshelfUpdateMemo(User user, Long id, BookshelfUpdateMemoReqDto bookshelfUpdateMemoReqDto) {
         Memo memo = memoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchDataException("Memo id = " + id));
         commonService.checkUser(user, memo.getBook());

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos.*;
+
 @Slf4j
 @Validated
 @RestController
@@ -35,7 +37,7 @@ public class BookshelfMemoController {
     public ResponseEntity<?> bookshelfRetrieveMemo(@AuthenticationPrincipal User user,
                                                    @RequestParam Long bookId) {
         log.info("[Request] Retrieve all Memos in book id = " + bookId);
-        List<BookshelfDetailDtos.BookshelfMemoResDto> result = bookshelfMemoService.bookshelfMemo(user, bookId);
+        List<BookshelfMemoResDto> result = bookshelfMemoService.bookshelfMemo(user, bookId);
         if (result.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -51,7 +53,7 @@ public class BookshelfMemoController {
      */
     @PostMapping("")
     public ResponseEntity<?> bookshelfMemo(@AuthenticationPrincipal User user,
-                                           @Valid @RequestBody BookshelfDetailDtos.BookshelfMemoReqDto bookshelfMemoReqDto) {
+                                           @Valid @RequestBody BookshelfMemoReqDto bookshelfMemoReqDto) {
         log.info("[Request] Add memo book id = " + bookshelfMemoReqDto.getId());
         bookshelfMemoService.bookshelfAddMemo(user, bookshelfMemoReqDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -69,7 +71,7 @@ public class BookshelfMemoController {
     @PutMapping("/{memoId}")
     public ResponseEntity<?> bookshelfMemo(@AuthenticationPrincipal User user,
                                            @PathVariable Long memoId,
-                                           @Valid @RequestBody BookshelfDetailDtos.BookshelfUpdateMemoReqDto bookshelfUpdateMemoReqDto) {
+                                           @Valid @RequestBody BookshelfUpdateMemoReqDto bookshelfUpdateMemoReqDto) {
         log.info("[Request] Update memo Memo id = " + memoId);
         bookshelfMemoService.bookshelfUpdateMemo(user, memoId, bookshelfUpdateMemoReqDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
