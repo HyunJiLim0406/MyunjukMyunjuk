@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
             NoSuchDataException.class,
             InvalidReqParamException.class,
             InvalidReqBodyException.class,
-            AccessDeniedException.class})
+            AccessDeniedException.class,
+            S3Exception.class})
     public ResponseEntity<?> handleRuntimeExceptions(final CustomRuntimeException e) {
         return ResponseEntity.badRequest().body(errorMsg(e.getName(), e.getMessage()));
     }
