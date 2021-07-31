@@ -65,13 +65,12 @@ public class BookshelfDetailDtos {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @NotNull
     public static class BookshelfInfoUpdateReqDto {
 
+        @NotNull
         private String title;
         private String author;
         private String publisher;
-        private String isbn;
         private Integer totPage;
     }
 
@@ -91,6 +90,7 @@ public class BookshelfDetailDtos {
     @AllArgsConstructor
     @Builder
     public static class BookshelfMemoResDto {
+
         private Long id;
         private String content;
         private LocalDateTime saved;
@@ -102,6 +102,7 @@ public class BookshelfDetailDtos {
     @Builder
     @NotNull
     public static class BookshelfUpdateMemoReqDto {
+
         private String content;
     }
 }

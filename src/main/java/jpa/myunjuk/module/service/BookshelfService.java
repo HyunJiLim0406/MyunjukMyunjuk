@@ -1,6 +1,8 @@
 package jpa.myunjuk.module.service;
 
+import jpa.myunjuk.infra.exception.DuplicateException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
+import jpa.myunjuk.infra.exception.S3Exception;
 import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
 import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
 import jpa.myunjuk.module.model.domain.*;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,6 +31,7 @@ public class BookshelfService {
     private final CharactersService charactersService;
     private final CommonService commonService;
     private final CharactersMapper charactersMapper;
+    private final S3Service s3Service;
 
     /**
      * bookShelf
@@ -45,11 +49,11 @@ public class BookshelfService {
                 .filter(o -> bookStatus == null || o.getBookStatus() == BookStatus.from(bookStatus)) //검색 조건 필터링
                 .forEach(o -> {
                     if (o.getBookStatus() == BookStatus.DONE)
-                        bookList.add(bookshelfMapper.INSTANCE.bookToDoneBook(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toDoneBook(o));
                     if (o.getBookStatus() == BookStatus.READING)
-                        bookList.add(bookshelfMapper.INSTANCE.bookToReadingBook(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toReadingBook(o));
                     if (o.getBookStatus() == BookStatus.WISH)
-                        bookList.add(bookshelfMapper.INSTANCE.bookToWishBook(o));
+                        bookList.add(bookshelfMapper.INSTANCE.toWishBook(o));
                 });
         return bookList;
     }
@@ -83,7 +87,7 @@ public class BookshelfService {
         if (before == BookStatus.DONE && after != BookStatus.DONE)
             charactersService.removeCharacters(user);
         if (before != BookStatus.DONE && after == BookStatus.DONE)
-            return charactersMapper.toDto(charactersService.addNewCharacters(user));
+            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user));
         return null;
     }
 
@@ -113,10 +117,29 @@ public class BookshelfService {
      */
     public BookshelfInfoDto bookshelfInfo(User user, Long id) {
         Book book = commonService.getBook(user, id);
-        return bookshelfMapper.INSTANCE.bookToBookshelfInfoDto(book);
+        return bookshelfMapper.INSTANCE.toBookshelfInfoDto(book);
     }
 
-    public void bookshelfUpdateInfo(User user, Long id, MultipartFile file, BookshelfInfoUpdateReqDto req){
-
+    /**
+     * bookshelfUpdateInfo
+     *
+     * @param user
+     * @param id
+     * @param file
+     * @param req
+     */
+    @Transactional
+    public void bookshelfUpdateInfo(User user, Long id, MultipartFile file, BookshelfInfoUpdateReqDto req) {
+        Book book = commonService.getBook(user, id);
+        String thumbnail = book.getUrl();
+        if (file != null) {
+            try {
+                thumbnail = s3Service.upload(file);
+            } catch (IOException e) {
+                throw new S3Exception("file = " + file.getOriginalFilename());
+            }
+        }
+        book.updateBookInfo(req.getTitle(), req.getAuthor(), req.getPublisher(), req.getTotPage(), thumbnail);
+        bookRepository.save(book);
     }
 }

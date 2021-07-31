@@ -96,12 +96,23 @@ public class BookshelfController {
         return new ResponseEntity<>(bookshelfService.bookshelfInfo(user, bookId), HttpStatus.OK);
     }
 
-//    @PutMapping("/info/{bookId}")
-//    public ResponseEntity<?> bookshelfInfo(@AuthenticationPrincipal User user,
-//                                           @PathVariable Long bookId,
-//                                           @RequestPart MultipartFile thumbnail,
-//                                           @Valid @RequestBody BookshelfInfoUpdateReqDto bookshelfInfoUpdateReqDto) {
-//        log.info("[Request] Update book info " + bookId);
-//
-//    }
+    /**
+     * 책 정보 수정
+     * localhost:8080/bookshelf/info/42
+     *
+     * @param user
+     * @param bookId
+     * @param thumbnail
+     * @param bookshelfInfoUpdateReqDto
+     * @return ResponseEntity
+     */
+    @PutMapping(value = "/info/{bookId}")
+    public ResponseEntity<?> bookshelfInfo(@AuthenticationPrincipal User user,
+                                           @PathVariable Long bookId,
+                                           @RequestPart(required = false) MultipartFile thumbnail,
+                                           @Valid @RequestPart BookshelfInfoUpdateReqDto bookshelfInfoUpdateReqDto) {
+        log.info("[Request] Update book info " + bookId);
+        bookshelfService.bookshelfUpdateInfo(user, bookId, thumbnail, bookshelfInfoUpdateReqDto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

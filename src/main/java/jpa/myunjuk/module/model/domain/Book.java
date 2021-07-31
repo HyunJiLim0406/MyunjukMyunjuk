@@ -97,4 +97,13 @@ public class Book {
         this.readPage = readPage;
         this.expectation = expectation;
     }
+
+    public void updateBookInfo(String title, String author, String publisher, Integer totPage, String thumbnail){
+
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.totPage = totPage;
+        this.thumbnail = thumbnail;
+    }
 }
