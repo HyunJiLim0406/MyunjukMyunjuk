@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-30T12:34:39+0900",
+    date = "2021-07-31T15:09:38+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
 public class CharactersMapperImpl implements CharactersMapper {
 
     @Override
-    public AddSearchDetailResDto toDto(Characters characters) {
+    public AddSearchDetailResDto toAddSearchDetailResDto(Characters characters) {
         if ( characters == null ) {
             return null;
         }

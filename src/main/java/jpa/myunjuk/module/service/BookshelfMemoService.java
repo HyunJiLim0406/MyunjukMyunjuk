@@ -5,7 +5,6 @@ import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.Memo;
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos;
 import jpa.myunjuk.module.repository.MemoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class BookshelfMemoService {
     public List<BookshelfMemoResDto> bookshelfMemo(User user, Long id) {
         Book book = commonService.getBook(user, id);
         return memoRepository.findAllByBookOrderBySavedDesc(book).stream()
-                .map(bookshelfMapper.INSTANCE::memoToBookshelfMemoResDto)
+                .map(bookshelfMapper.INSTANCE::toBookshelfMemoResDto)
                 .collect(Collectors.toList());
     }
 

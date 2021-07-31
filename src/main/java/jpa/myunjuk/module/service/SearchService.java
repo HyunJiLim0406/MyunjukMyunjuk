@@ -1,12 +1,10 @@
 package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.DuplicateException;
-import jpa.myunjuk.infra.exception.InvalidReqBodyException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.BookStatus;
-import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.search.*;
 import jpa.myunjuk.module.repository.BookRepository;
@@ -20,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -135,7 +132,7 @@ public class SearchService {
 
         Book save = bookRepository.save(buildBookFromReq(user, searchReqDto)); //책 저장
         if (save.getBookStatus() == BookStatus.DONE)  //저장할 책이 '읽은 책' 이라면
-            return charactersMapper.toDto(charactersService.addNewCharacters(user)); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
+            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user)); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
         return null;
     }
 

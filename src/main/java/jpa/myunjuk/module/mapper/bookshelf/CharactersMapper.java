@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface CharactersMapper {
     CharactersMapper INSTANCE = Mappers.getMapper(CharactersMapper.class);
 
-    AddSearchDetailResDto toDto(Characters characters);
+    AddSearchDetailResDto toAddSearchDetailResDto(Characters characters);
 }

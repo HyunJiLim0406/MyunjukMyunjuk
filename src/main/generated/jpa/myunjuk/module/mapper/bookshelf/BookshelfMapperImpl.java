@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-30T12:34:39+0900",
+    date = "2021-07-31T15:08:33+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
@@ -46,7 +46,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public BookshelfInfoDto bookToBookshelfInfoDto(Book book) {
+    public BookshelfInfoDto toBookshelfInfoDto(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -64,7 +64,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public DoneBook bookToDoneBook(Book book) {
+    public DoneBook toDoneBook(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -86,7 +86,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public ReadingBook bookToReadingBook(Book book) {
+    public ReadingBook toReadingBook(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -108,7 +108,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public WishBook bookToWishBook(Book book) {
+    public WishBook toWishBook(Book book) {
         if ( book == null ) {
             return null;
         }
@@ -130,7 +130,7 @@ public class BookshelfMapperImpl implements BookshelfMapper {
     }
 
     @Override
-    public BookshelfMemoResDto memoToBookshelfMemoResDto(Memo memo) {
+    public BookshelfMemoResDto toBookshelfMemoResDto(Memo memo) {
         if ( memo == null ) {
             return null;
         }
