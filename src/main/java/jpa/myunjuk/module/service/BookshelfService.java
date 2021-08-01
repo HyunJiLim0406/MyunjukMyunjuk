@@ -131,7 +131,7 @@ public class BookshelfService {
     @Transactional
     public void bookshelfUpdateInfo(User user, Long id, MultipartFile file, BookshelfInfoUpdateReqDto req) {
         Book book = commonService.getBook(user, id);
-        String thumbnail = book.getUrl();
+        String thumbnail = book.getThumbnail();
         if (file != null) {
             try {
                 thumbnail = s3Service.upload(file);
