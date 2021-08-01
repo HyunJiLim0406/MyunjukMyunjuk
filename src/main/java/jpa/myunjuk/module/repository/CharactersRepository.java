@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface CharactersRepository extends JpaRepository<Characters, Long> {
     List<Characters> findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(double height, List<Long> id);
+    Characters findFirstByHeightLessThanEqualOrderByHeightDesc(double height);
 }
