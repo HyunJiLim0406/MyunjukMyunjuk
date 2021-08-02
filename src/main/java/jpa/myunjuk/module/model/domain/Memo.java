@@ -2,6 +2,8 @@ package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ public class Memo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_sn")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     private Book book;
 
