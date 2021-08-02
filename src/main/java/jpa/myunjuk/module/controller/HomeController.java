@@ -25,7 +25,7 @@ public class HomeController {
                                   @RequestParam(required = false) Integer month) {
         log.info("[Request] home " + user.getEmail());
         HomeDto result = homeService.home(user, year, month);
-        if(result.getSize()==0)
+        if (result.getSize() == 0)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(homeService.home(user, year, month), HttpStatus.OK);
     }
