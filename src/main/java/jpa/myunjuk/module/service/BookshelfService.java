@@ -1,10 +1,9 @@
 package jpa.myunjuk.module.service;
 
-import jpa.myunjuk.infra.exception.DuplicateException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.infra.exception.S3Exception;
-import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
-import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
+import jpa.myunjuk.module.mapper.BookshelfMapper;
+import jpa.myunjuk.module.mapper.CharactersMapper;
 import jpa.myunjuk.module.model.domain.*;
 import jpa.myunjuk.module.model.dto.search.AddSearchDetailResDto;
 import jpa.myunjuk.module.repository.BookRepository;

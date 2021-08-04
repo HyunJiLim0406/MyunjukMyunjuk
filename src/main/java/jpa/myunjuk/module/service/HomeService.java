@@ -1,7 +1,7 @@
 package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
-import jpa.myunjuk.module.mapper.bookshelf.HomeMapper;
+import jpa.myunjuk.module.mapper.HomeMapper;
 import jpa.myunjuk.module.model.domain.BookStatus;
 import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
@@ -34,7 +34,7 @@ public class HomeService {
                 .filter(o -> o.getBookStatus() == BookStatus.DONE)
                 .filter(o -> year == null || o.getEndDate().getYear() == year)
                 .filter(o -> month == null || o.getEndDate().getMonthValue() == month)
-                .map(homeMapper.INSTANCE::toDto)
+                .map(homeMapper.INSTANCE::toItem)
                 .collect(Collectors.toList());
 
         return builder()

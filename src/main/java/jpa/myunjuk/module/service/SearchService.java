@@ -2,7 +2,7 @@ package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.DuplicateException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
-import jpa.myunjuk.module.mapper.bookshelf.CharactersMapper;
+import jpa.myunjuk.module.mapper.CharactersMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.BookStatus;
 import jpa.myunjuk.module.model.domain.User;

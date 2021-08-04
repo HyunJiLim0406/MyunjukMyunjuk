@@ -1,7 +1,7 @@
 package jpa.myunjuk.module.service;
 
 import jpa.myunjuk.infra.exception.NoSuchDataException;
-import jpa.myunjuk.module.mapper.bookshelf.BookshelfMapper;
+import jpa.myunjuk.module.mapper.BookshelfMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.Memo;
 import jpa.myunjuk.module.model.domain.User;
