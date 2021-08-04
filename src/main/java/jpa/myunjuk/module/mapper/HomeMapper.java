@@ -1,4 +1,4 @@
-package jpa.myunjuk.module.mapper.bookshelf;
+package jpa.myunjuk.module.mapper;
 
 import jpa.myunjuk.module.model.domain.Book;
 import org.mapstruct.Mapper;
@@ -10,5 +10,5 @@ import static jpa.myunjuk.module.model.dto.HomeDto.*;
 public interface HomeMapper {
     HomeMapper INSTANCE = Mappers.getMapper(HomeMapper.class);
 
-    Item toDto(Book book);
+    Item toItem(Book book);
 }

@@ -1,4 +1,4 @@
-package jpa.myunjuk.module.mapper.bookshelf;
+package jpa.myunjuk.module.mapper;
 
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.Memo;
@@ -12,7 +12,7 @@ import static jpa.myunjuk.module.model.dto.bookshelf.BookshelfResDtos.*;
 public interface BookshelfMapper {
     BookshelfMapper INSTANCE = Mappers.getMapper(BookshelfMapper.class);
 
-    DoneBook toDto(Book book);
+    WishBook toWishBookDto(Book book);
     BookshelfInfoDto toBookshelfInfoDto(Book book);
     DoneBook toDoneBook(Book book);
     ReadingBook toReadingBook(Book book);
