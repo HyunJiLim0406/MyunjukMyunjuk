@@ -49,4 +49,8 @@ public class UserCharacter {
         if (!user.getUserCharacters().contains(this))
             user.getUserCharacters().add(this);
     }
+
+    public void updateRepresentation(boolean representation){
+        this.representation = representation;
+    }
 }

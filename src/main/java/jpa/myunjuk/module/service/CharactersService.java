@@ -1,5 +1,8 @@
 package jpa.myunjuk.module.service;
 
+import jpa.myunjuk.infra.exception.AccessDeniedException;
+import jpa.myunjuk.infra.exception.NoSuchDataException;
+import jpa.myunjuk.module.mapper.CharactersMapper;
 import jpa.myunjuk.module.model.domain.Characters;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.domain.UserCharacter;
@@ -13,13 +16,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jpa.myunjuk.module.model.dto.CharacterDtos.*;
+
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class CharactersService {
 
     private final UserCharacterRepository userCharacterRepository;
     private final CharactersRepository charactersRepository;
+    private final CharactersMapper charactersMapper;
 
     /**
      * addNewCharacters
@@ -27,6 +33,7 @@ public class CharactersService {
      * @param user
      * @return Characters
      */
+    @Transactional
     public Characters addNewCharacters(User user) {
         List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(user.bookHeight(), getCharactersFromUser(user)).stream()
                 .map(o -> UserCharacter.builder()
@@ -48,6 +55,7 @@ public class CharactersService {
      *
      * @param user
      */
+    @Transactional
     public void removeCharacters(User user) {
         double height = user.bookHeight();
         List<UserCharacter> list = user.getUserCharacters().stream()
@@ -63,5 +71,73 @@ public class CharactersService {
         return user.getUserCharacters().stream()
                 .map(o -> o.getCharacters().getId())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * characterList
+     *
+     * @return List<CharacterListDto>
+     */
+    public List<CharacterListDto> characterList() {
+        return charactersRepository.findAll().stream()
+                .map(charactersMapper.INSTANCE::toCharacterListDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * characterDetail
+     *
+     * @param id
+     * @return CharacterDto
+     */
+    public CharacterDto characterDetail(Long id) {
+        return charactersMapper.INSTANCE.toCharacterDto(charactersRepository.findById(id)
+                .orElseThrow(() -> new NoSuchDataException("Character id = " + id)));
+    }
+
+    /**
+     * userCharacterList
+     *
+     * @param user
+     * @return List<UserCharacterDto>
+     */
+    public List<UserCharacterDto> userCharacterList(User user) {
+        return user.getUserCharacters().stream()
+                .map(o -> UserCharacterDto.builder()
+                        .userCharacterId(o.getId())
+                        .characterId(o.getCharacters().getId())
+                        .name(o.getCharacters().getName())
+                        .img(o.getCharacters().getImg())
+                        .height(o.getCharacters().getHeight())
+                        .achieve(o.getAchieve())
+                        .representation(o.isRepresentation())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * updateCharacterRepresentation
+     *
+     * @param user
+     * @param id
+     */
+    @Transactional
+    public void updateCharacterRepresentation(User user, Long id) {
+        UserCharacter newRepresentation = userCharacterRepository.findById(id)
+                .orElseThrow(() -> new NoSuchDataException("User character id = " + id));
+        if (!newRepresentation.getUser().equals(user))
+            throw new AccessDeniedException("User character id = " + id);
+
+        UserCharacter oldRepresentation = user.getUserCharacters().stream()
+                .filter(UserCharacter::isRepresentation)
+                .reduce((a, b) -> {
+                    throw new NoSuchDataException("There are too many representation characters");
+                })
+                .orElseThrow(() -> new NoSuchDataException("There is no representation character"));
+        oldRepresentation.updateRepresentation(false);
+        newRepresentation.updateRepresentation(true);
+
+        userCharacterRepository.save(oldRepresentation);
+        userCharacterRepository.save(newRepresentation);
     }
 }
