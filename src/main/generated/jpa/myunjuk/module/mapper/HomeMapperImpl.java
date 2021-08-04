@@ -1,4 +1,4 @@
-package jpa.myunjuk.module.mapper.bookshelf;
+package jpa.myunjuk.module.mapper;
 
 import javax.annotation.processing.Generated;
 import jpa.myunjuk.module.model.domain.Book;
@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-08-01T19:26:16+0900",
+    date = "2021-08-04T15:28:10+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
 public class HomeMapperImpl implements HomeMapper {
 
     @Override
-    public Item toDto(Book book) {
+    public Item toItem(Book book) {
         if ( book == null ) {
             return null;
         }

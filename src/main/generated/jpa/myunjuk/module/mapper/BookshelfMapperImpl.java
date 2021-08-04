@@ -1,4 +1,4 @@
-package jpa.myunjuk.module.mapper.bookshelf;
+package jpa.myunjuk.module.mapper;
 
 import javax.annotation.processing.Generated;
 import jpa.myunjuk.module.model.domain.Book;
@@ -17,32 +17,32 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-31T15:08:33+0900",
+    date = "2021-08-04T15:28:10+0900",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 14.0.1 (Oracle Corporation)"
 )
 @Component
 public class BookshelfMapperImpl implements BookshelfMapper {
 
     @Override
-    public DoneBook toDto(Book book) {
+    public WishBook toWishBookDto(Book book) {
         if ( book == null ) {
             return null;
         }
 
-        DoneBookBuilder doneBook = DoneBook.builder();
+        WishBookBuilder wishBook = WishBook.builder();
 
-        doneBook.id( book.getId() );
-        doneBook.title( book.getTitle() );
-        doneBook.author( book.getAuthor() );
-        doneBook.thumbnail( book.getThumbnail() );
-        doneBook.bookStatus( book.getBookStatus() );
-        doneBook.startDate( book.getStartDate() );
-        doneBook.endDate( book.getEndDate() );
+        wishBook.id( book.getId() );
+        wishBook.title( book.getTitle() );
+        wishBook.author( book.getAuthor() );
+        wishBook.thumbnail( book.getThumbnail() );
+        wishBook.bookStatus( book.getBookStatus() );
+        wishBook.totPage( book.getTotPage() );
         if ( book.getScore() != null ) {
-            doneBook.score( book.getScore() );
+            wishBook.score( book.getScore() );
         }
+        wishBook.expectation( book.getExpectation() );
 
-        return doneBook.build();
+        return wishBook.build();
     }
 
     @Override
