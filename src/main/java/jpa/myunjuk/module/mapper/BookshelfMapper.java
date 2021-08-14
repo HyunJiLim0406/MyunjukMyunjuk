@@ -13,9 +13,9 @@ public interface BookshelfMapper {
     BookshelfMapper INSTANCE = Mappers.getMapper(BookshelfMapper.class);
 
     WishBook toWishBookDto(Book book);
+    BookshelfMemoResDto toBookshelfMemoResDto(Memo memo);
     BookshelfInfoDto toBookshelfInfoDto(Book book);
     DoneBook toDoneBook(Book book);
     ReadingBook toReadingBook(Book book);
     WishBook toWishBook(Book book);
-    BookshelfMemoResDto toBookshelfMemoResDto(Memo memo);
 }

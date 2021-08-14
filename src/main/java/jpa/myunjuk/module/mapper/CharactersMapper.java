@@ -11,7 +11,7 @@ import static jpa.myunjuk.module.model.dto.CharacterDtos.*;
 public interface CharactersMapper {
     CharactersMapper INSTANCE = Mappers.getMapper(CharactersMapper.class);
 
-    AddSearchDetailResDto toAddSearchDetailResDto(Characters characters);
     CharacterListDto toCharacterListDto(Characters characters);
     CharacterDto toCharacterDto(Characters characters);
+    AddSearchDetailResDto toAddSearchDetailResDto(Characters characters);
 }
