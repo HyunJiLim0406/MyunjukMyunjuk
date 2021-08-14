@@ -33,6 +33,16 @@ public class Memo {
     @NotNull
     private LocalDateTime saved;
 
+    @Override
+    public String toString() {
+        return "Memo{" +
+                "id=" + id +
+                ", book=" + book.getId() +
+                ", content='" + content + '\'' +
+                ", saved=" + saved +
+                '}';
+    }
+
     public void updateMemo(String content){
         this.content = content;
     }
