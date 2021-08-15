@@ -1,3 +1,5 @@
+## 📖 프로젝트 구조
+
 ```jsx
 +---main
 |   +---java
@@ -141,5 +143,3 @@
                             SearchServiceTest.java
                             UserServiceTest.java
 ```
-
----
