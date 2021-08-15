@@ -4,7 +4,7 @@ import jpa.myunjuk.infra.exception.AccessDeniedException;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.module.model.domain.*;
-import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.book.BookRepository;
 import jpa.myunjuk.module.repository.UserCharacterRepository;
 import jpa.myunjuk.module.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

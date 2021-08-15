@@ -5,7 +5,7 @@ import jpa.myunjuk.infra.exception.InvalidReqBodyException;
 import jpa.myunjuk.infra.exception.NoSuchDataException;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,6 @@
-package jpa.myunjuk.module.repository;
+package jpa.myunjuk.module.repository.memo;
 
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jpa.myunjuk.module.model.domain.Book;
-import jpa.myunjuk.module.model.domain.Memo;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -16,10 +13,10 @@ public class CustomizedMemoRepositoryImpl implements CustomizedMemoRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Memo> findByBookFirst(List<Long> bookIds) {
-        return jpaQueryFactory.selectFrom(memo)
+    public List<Long> findLatestMemoByBookIds(List<Long> bookIds) {
+        return jpaQueryFactory.select(memo.id.max())
+                .from(memo)
                 .where(memo.book.id.in(bookIds))
-                .orderBy(memo.saved.desc())
                 .groupBy(memo.book)
                 .fetch();
     }

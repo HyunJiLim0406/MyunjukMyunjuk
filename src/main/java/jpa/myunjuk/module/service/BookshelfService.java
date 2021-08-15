@@ -6,7 +6,7 @@ import jpa.myunjuk.module.mapper.BookshelfMapper;
 import jpa.myunjuk.module.mapper.CharactersMapper;
 import jpa.myunjuk.module.model.domain.*;
 import jpa.myunjuk.module.model.dto.search.AddSearchDetailResDto;
-import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -5,7 +5,7 @@ import jpa.myunjuk.module.mapper.BookshelfMapper;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.Memo;
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.repository.MemoRepository;
+import jpa.myunjuk.module.repository.memo.MemoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

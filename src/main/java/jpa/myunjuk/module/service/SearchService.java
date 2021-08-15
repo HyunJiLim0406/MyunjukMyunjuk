@@ -7,7 +7,7 @@ import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.BookStatus;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.search.*;
-import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

@@ -3,7 +3,7 @@ package jpa.myunjuk.module.service;
 import jpa.myunjuk.module.model.domain.Memo;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.bookshelf.BookshelfDetailDtos;
-import jpa.myunjuk.module.repository.BookRepository;
+import jpa.myunjuk.module.repository.book.BookRepository;
 import jpa.myunjuk.module.repository.UserCharacterRepository;
 import jpa.myunjuk.module.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
