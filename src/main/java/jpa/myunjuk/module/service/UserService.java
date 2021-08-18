@@ -109,17 +109,6 @@ public class UserService {
         }
     }
 
-    /**
-     * signOut
-     *
-     * @param user
-     * @return UserDto
-     */
-    public void signOut(User user) {
-        user.setRefreshTokenValue(null);
-        userRepository.save(user);
-    }
-
     private User buildUserFromUserJoinDto(UserSignUpReqDto userSignUpReqDto) {
         return User.builder()
                 .email(userSignUpReqDto.getEmail())

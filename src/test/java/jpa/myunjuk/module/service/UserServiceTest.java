@@ -36,14 +36,4 @@ class UserServiceTest {
         assertEquals(user.getUserCharacters().size(), 1);
         assertTrue(user.getUserCharacters().get(0).isRepresentation());
     }
-
-    @Test
-    @DisplayName("User Sign-Out | Success")
-    void signOutSuccess() throws Exception {
-        User user = userRepository.findByEmail("test@test.com").orElse(null);
-        assertNotNull(user);
-        assertNotNull(user.getRefreshTokenValue());
-        userService.signOut(user);
-        assertNull(user.getRefreshTokenValue());
-    }
 }

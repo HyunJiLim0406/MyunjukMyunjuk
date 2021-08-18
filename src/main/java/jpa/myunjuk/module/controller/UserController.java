@@ -60,18 +60,4 @@ public class UserController {
         log.info("[Request] refresh-tokens");
         return new ResponseEntity<>(userService.refreshUserTokens(jwtRefreshReqDto), HttpStatus.OK);
     }
-
-    /**
-     * 로그아웃
-     * localhost:8080/sign-out
-     *
-     * @param user
-     * @return ResponseEntity
-     */
-    @PostMapping("/sign-out")
-    public ResponseEntity<?> signOut(@AuthenticationPrincipal User user) {
-        log.info("[Request] sign-out");
-        userService.signOut(user);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }

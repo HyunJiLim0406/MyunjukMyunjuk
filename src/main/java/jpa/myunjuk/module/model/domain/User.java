@@ -91,4 +91,12 @@ public class User implements UserDetails {
                 .filter(o -> o.getBookStatus() == BookStatus.DONE)
                 .mapToInt(Book::getTotPage).sum() * 0.005;
     }
+
+    public void updateUserImg(String img) {
+        this.img = img;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

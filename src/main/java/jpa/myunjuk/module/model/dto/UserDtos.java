@@ -34,4 +34,24 @@ public class UserDtos {
         private String email;
         private String password;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UserInfoDto {
+
+        private String email;
+        private String nickname;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @NotNull
+    public static class UserNickNameReqDto {
+
+        private String nickname;
+    }
 }
