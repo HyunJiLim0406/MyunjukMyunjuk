@@ -3,9 +3,8 @@ package jpa.myunjuk.module.service;
 import jpa.myunjuk.infra.exception.InvalidReqParamException;
 import jpa.myunjuk.module.model.domain.Book;
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.model.dto.history.ChartAmountDto;
+import jpa.myunjuk.module.model.dto.history.ChartDto;
 import jpa.myunjuk.module.model.dto.history.MemoDto;
-import jpa.myunjuk.module.model.dto.history.ChartPageDto;
 import jpa.myunjuk.module.repository.book.BookRepository;
 import jpa.myunjuk.module.repository.memo.MemoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jpa.myunjuk.module.model.dto.history.ChartAmountDto.*;
+import static jpa.myunjuk.module.model.dto.history.ChartDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,32 +48,20 @@ public class HistoryService {
     }
 
     /**
-     * chartAmount
+     * chart
      *
      * @param user
      * @param year
-     * @return ChartAmountDto
+     * @return ChartDto
      */
-    public ChartAmountDto chartAmount(User user, int year) {
+    public ChartDto chart(User user, int year) {
         validateYear(year);
-        List<AmountDto> statistics = bookRepository.findByYearCountGroupByMonth(user.getId(), year);
+        List<Item> statistics = bookRepository.findByYearGroupByMonth(user.getId(), year);
 
-        return ChartAmountDto.builder()
-                .totalCount(statistics.stream().mapToLong(AmountDto::getCount).sum())
+        return ChartDto.builder()
+                .totalCount(statistics.stream().mapToLong(Item::getCount).sum())
                 .itemList(statistics)
                 .build();
-    }
-
-    /**
-     * chartPage
-     *
-     * @param user
-     * @param year
-     * @return List<ChartPageDto>
-     */
-    public List<ChartPageDto> chartPage(User user, int year) {
-        validateYear(year);
-        return bookRepository.findByYearPageGroupByMonth(user.getId(), year);
     }
 
     private void validateYear(int year) {

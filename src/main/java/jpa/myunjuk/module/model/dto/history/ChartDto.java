@@ -9,19 +9,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChartAmountDto {
+public class ChartDto {
 
     private Long totalCount;
-    private List<AmountDto> itemList = new ArrayList<>();
+    private List<Item> itemList = new ArrayList<>();
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class AmountDto {
+    public static class Item {
 
         private Integer month;
         private Long count;
+        private Integer page;
     }
 }

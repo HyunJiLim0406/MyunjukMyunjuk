@@ -1,8 +1,8 @@
 package jpa.myunjuk.module.controller;
 
 import jpa.myunjuk.module.model.domain.User;
-import jpa.myunjuk.module.model.dto.history.ChartAmountDto;
-import jpa.myunjuk.module.model.dto.history.ChartPageDto;
+import jpa.myunjuk.module.model.dto.history.ChartDto;
+import jpa.myunjuk.module.model.dto.history.MemoDto;
 import jpa.myunjuk.module.service.HistoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,41 +31,26 @@ public class HistoryController {
     @GetMapping("/my-memos")
     public ResponseEntity<?> myMemos(@AuthenticationPrincipal User user) {
         log.info("[Request] Retrieve all Memos " + user.getEmail());
-        return new ResponseEntity<>(historyService.myMemos(user), HttpStatus.OK);
-    }
-
-    /**
-     * 읽은 책의 권수 달별로 세기
-     * localhost:8080/history/chart/amount
-     *
-     * @param user
-     * @param year
-     * @return ResponseEntity
-     */
-    @GetMapping("/chart/amount")
-    public ResponseEntity<?> chartAmount(@AuthenticationPrincipal User user,
-                                         @RequestParam int year) {
-        log.info("[Request] Chart for amount " + user.getEmail());
-        ChartAmountDto result = historyService.chartAmount(user, year);
-        if (result.getTotalCount() == 0)
+        List<MemoDto> result = historyService.myMemos(user);
+        if (result.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
-     * 읽은 책의 쪽수 달별로 세기
-     * localhost:8080/history/chart/page
+     * 읽은 책 차트 보기
+     * localhost:8080/history/chart
      *
      * @param user
      * @param year
      * @return ResponseEntity
      */
-    @GetMapping("/chart/page")
-    public ResponseEntity<?> chartPage(@AuthenticationPrincipal User user,
-                                       @RequestParam int year) {
-        log.info("[Request] Chart for page " + user.getEmail());
-        List<ChartPageDto> result = historyService.chartPage(user, year);
-        if (result.size() == 0)
+    @GetMapping("/chart")
+    public ResponseEntity<?> chart(@AuthenticationPrincipal User user,
+                                   @RequestParam int year) {
+        log.info("[Request] Chart " + user.getEmail());
+        ChartDto result = historyService.chart(user, year);
+        if (result.getTotalCount() == 0)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
