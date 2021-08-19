@@ -21,6 +21,19 @@ public class ProfileController {
     private final ProfileService profileService;
 
     /**
+     * 프로필 정보
+     * localhost:8080/profile
+     *
+     * @param user
+     * @return ResponseEntity
+     */
+    @GetMapping("")
+    public ResponseEntity<?> profile(@AuthenticationPrincipal User user) {
+        log.info("[Request] User profile " + user.getEmail());
+        return new ResponseEntity<>(profileService.profile(user), HttpStatus.OK);
+    }
+
+    /**
      * 사용자 정보
      * localhost:8080/profile/info
      *
@@ -29,8 +42,8 @@ public class ProfileController {
      */
     @GetMapping("/info")
     public ResponseEntity<?> info(@AuthenticationPrincipal User user) {
-        log.info("[Request] User info "+user.getEmail());
-        return new ResponseEntity<>(profileService.info(user), HttpStatus.NO_CONTENT);
+        log.info("[Request] User info " + user.getEmail());
+        return new ResponseEntity<>(profileService.info(user), HttpStatus.OK);
     }
 
     /**
@@ -44,7 +57,7 @@ public class ProfileController {
     @PutMapping("/info/img")
     public ResponseEntity<?> img(@AuthenticationPrincipal User user,
                                  @RequestPart(required = false) MultipartFile img) {
-        log.info("[Request] Update user img "+user.getEmail());
+        log.info("[Request] Update user img " + user.getEmail());
         profileService.updateImg(user, img);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -60,7 +73,7 @@ public class ProfileController {
     @PutMapping("/info/nickname")
     public ResponseEntity<?> nickname(@AuthenticationPrincipal User user,
                                       @RequestBody UserNickNameReqDto userNickNameReqDto) {
-        log.info("[Request] Update user nickname "+user.getNickname());
+        log.info("[Request] Update user nickname " + user.getNickname());
         profileService.updateNickname(user, userNickNameReqDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

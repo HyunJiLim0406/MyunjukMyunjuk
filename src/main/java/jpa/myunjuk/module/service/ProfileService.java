@@ -21,6 +21,19 @@ public class ProfileService {
     private final S3Service s3Service;
 
     /**
+     * profile
+     *
+     * @param user
+     * @return UserProfileDto
+     */
+    public UserProfileDto profile(User user) {
+        return UserProfileDto.builder()
+                .nickname(user.getNickname())
+                .img(user.getImg())
+                .build();
+    }
+
+    /**
      * info
      *
      * @param user

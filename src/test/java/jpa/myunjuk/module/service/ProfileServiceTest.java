@@ -22,6 +22,17 @@ class ProfileServiceTest {
     ProfileService profileService;
 
     @Test
+    @DisplayName("Profile | Success")
+    void profileSuccess() throws Exception {
+        User user = userRepository.findByEmail("test@test.com").orElse(null);
+        assertNotNull(user);
+
+        UserProfileDto profile = profileService.profile(user);
+        assertEquals("hello", profile.getNickname());
+        assertNull(profile.getImg());
+    }
+
+    @Test
     @DisplayName("User info | Success")
     void infoSuccess() throws Exception {
         User user = userRepository.findByEmail("test@test.com").orElse(null);

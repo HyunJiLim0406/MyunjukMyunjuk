@@ -39,6 +39,16 @@ public class UserDtos {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class UserProfileDto {
+
+        private String nickname;
+        private String img;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class UserInfoDto {
 
         private String email;
