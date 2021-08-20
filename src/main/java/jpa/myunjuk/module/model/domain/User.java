@@ -2,6 +2,7 @@ package jpa.myunjuk.module.model.domain;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,6 +47,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCharacter> userCharacters = new ArrayList<>();
 
+    @ColumnDefault("0.0")
+    private double bookHeight;
+
     @Setter
     private String refreshTokenValue;
 
@@ -83,6 +87,16 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void stackBook(Integer height) {
+        if (height != null)
+            this.bookHeight += (height * 0.005);
+    }
+
+    public void removeBook(Integer height) {
+        if (height != null)
+            this.bookHeight -= (height * 0.005);
     }
 
     public double bookHeight() {

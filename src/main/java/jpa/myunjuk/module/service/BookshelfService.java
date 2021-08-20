@@ -84,9 +84,9 @@ public class BookshelfService {
 
         //책 상태의 변화에 따라 캐릭터를 추가 or 삭제
         if (before == BookStatus.DONE && after != BookStatus.DONE)
-            charactersService.removeCharacters(user);
+            charactersService.removeCharacters(user, book.getTotPage());
         if (before != BookStatus.DONE && after == BookStatus.DONE)
-            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user));
+            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user, book.getTotPage()));
         return null;
     }
 
@@ -101,10 +101,12 @@ public class BookshelfService {
         Book book = commonService.getBook(user, id);
 
         BookStatus bookStatus = book.getBookStatus();
+        Integer totPage = book.getTotPage();
+
         user.getBooks().remove(book);
         bookRepository.delete(book);
         if (bookStatus == BookStatus.DONE) //삭제된 책이 읽은 책이라면
-            charactersService.removeCharacters(user);
+            charactersService.removeCharacters(user, totPage);
     }
 
     /**

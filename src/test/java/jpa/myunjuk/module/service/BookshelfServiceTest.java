@@ -88,7 +88,7 @@ class BookshelfServiceTest {
         assertNotNull(user);
 
         int size = user.getUserCharacters().size();
-        System.out.println("user.bookHeight() = " + user.bookHeight());
+        System.out.println("user.bookHeight() = " + user.getBookHeight());
         BookshelfUpdateReqDto req = BookshelfUpdateReqDto.builder()
                 .bookStatus("wish")
                 .startDate(LocalDate.parse("2021-07-20"))

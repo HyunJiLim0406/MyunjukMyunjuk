@@ -8,6 +8,7 @@ import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.domain.UserCharacter;
 import jpa.myunjuk.module.repository.CharactersRepository;
 import jpa.myunjuk.module.repository.UserCharacterRepository;
+import jpa.myunjuk.module.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import static jpa.myunjuk.module.model.dto.CharacterDtos.*;
 @Transactional(readOnly = true)
 public class CharactersService {
 
+    private final UserRepository userRepository;
     private final UserCharacterRepository userCharacterRepository;
     private final CharactersRepository charactersRepository;
     private final CharactersMapper charactersMapper;
@@ -34,8 +36,11 @@ public class CharactersService {
      * @return Characters
      */
     @Transactional
-    public Characters addNewCharacters(User user) {
-        List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(user.bookHeight(), getCharactersFromUser(user)).stream()
+    public Characters addNewCharacters(User user, Integer bookPage) {
+        user.stackBook(bookPage);
+        userRepository.save(user);
+
+        List<UserCharacter> list = charactersRepository.findByHeightLessThanEqualAndIdNotInOrderByHeightDesc(user.getBookHeight(), getCharactersFromUser(user)).stream()
                 .map(o -> UserCharacter.builder()
                         .user(user)
                         .characters(o)
@@ -56,8 +61,11 @@ public class CharactersService {
      * @param user
      */
     @Transactional
-    public void removeCharacters(User user) {
-        double height = user.bookHeight();
+    public void removeCharacters(User user, Integer bookPage) {
+        user.removeBook(bookPage);
+        userRepository.save(user);
+
+        double height = user.getBookHeight();
         List<UserCharacter> list = user.getUserCharacters().stream()
                 .filter(o -> o.getCharacters().getHeight() > height)
                 .collect(Collectors.toList());

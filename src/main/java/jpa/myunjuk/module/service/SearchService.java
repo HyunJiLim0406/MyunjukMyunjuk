@@ -132,7 +132,7 @@ public class SearchService {
 
         Book save = bookRepository.save(buildBookFromReq(user, searchReqDto)); //책 저장
         if (save.getBookStatus() == BookStatus.DONE)  //저장할 책이 '읽은 책' 이라면
-            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user)); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
+            return charactersMapper.INSTANCE.toAddSearchDetailResDto(charactersService.addNewCharacters(user, save.getTotPage())); //추가되는 캐릭터 중 가장 키가 큰 캐릭터
         return null;
     }
 
