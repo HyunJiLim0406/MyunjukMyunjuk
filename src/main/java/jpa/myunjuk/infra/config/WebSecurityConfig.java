@@ -40,9 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedOrigin("http://localhost:3000");
+        corsConfiguration.addAllowedOrigin("http://localhost:8080");
         corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(3600L); //preflight 결과를 1시간동안 캐시에 저장
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -56,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .and()
-                .cors()
+                .cors().configurationSource(configurationSource())
                 .and()
                 .httpBasic().disable() //rest api만 고려하면 해제해도 되는듯?
                 .csrf().disable() //csrf 보안 토큰 diable 처리
