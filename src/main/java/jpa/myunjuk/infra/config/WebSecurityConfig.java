@@ -1,5 +1,6 @@
 package jpa.myunjuk.infra.config;
 
+import jpa.myunjuk.infra.exception.component.CustomAuthenticationEntryPoint;
 import jpa.myunjuk.infra.jwt.JwtAuthenticationFilter;
 import jpa.myunjuk.infra.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/**").permitAll() //그외 나머지 요청은 누구나 접근 가능
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class); //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음

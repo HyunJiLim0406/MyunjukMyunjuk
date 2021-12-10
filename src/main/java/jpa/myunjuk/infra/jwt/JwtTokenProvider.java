@@ -1,6 +1,7 @@
 package jpa.myunjuk.infra.jwt;
 
 import io.jsonwebtoken.*;
+import jpa.myunjuk.infra.exception.ExpiredJwtTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,8 +23,8 @@ public class JwtTokenProvider {
     @Value("${secret.key}")
     private String secretKey;
 
-    //private final long ACCESS_TOKEN_VALID_TIME = 1 * 60 * 1000L; //유효시간 1분
-    private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L; //유효시간 30분
+    private final long ACCESS_TOKEN_VALID_TIME = 20 * 1000L; //유효시간 1분
+    //private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L; //유효시간 30분
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 12 * 1000L; //유효시간 2주
 
     private final UserDetailsService userDetailsService;
@@ -48,7 +49,7 @@ public class JwtTokenProvider {
     }
 
     //JWT refresh token 생성
-    public String createRefreshToken(String value){
+    public String createRefreshToken(String value) {
         Claims claims = Jwts.claims();
         claims.put("value", value);
         Date now = new Date();
@@ -78,12 +79,14 @@ public class JwtTokenProvider {
 
     //토큰의 유효성과 만료일자 확인
     public boolean validateToken(String jwtToken) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date()); //만료일자
-        } catch (Exception e) { //유효성
-            return false;
-        }
+//        try {
+//            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+//            return !claims.getBody().getExpiration().before(new Date()); //만료일자
+//        } catch (Exception e) { //유효성
+//            return false;
+//        }
+        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+        return true;
     }
 
     //refresh token 정보 얻어내기

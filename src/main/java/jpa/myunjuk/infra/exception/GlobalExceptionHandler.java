@@ -21,7 +21,9 @@ public class GlobalExceptionHandler {
             InvalidReqParamException.class,
             InvalidReqBodyException.class,
             AccessDeniedException.class,
-            S3Exception.class})
+            S3Exception.class,
+            InvalidJwtTokenException.class,
+            ExpiredJwtTokenException.class})
     public ResponseEntity<?> handleRuntimeExceptions(final CustomRuntimeException e) {
         return ResponseEntity.badRequest().body(errorMsg(e.getName(), e.getMessage()));
     }
@@ -49,10 +51,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorMsg(e.getParsedString(), e.getMessage()));
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<?> handleNullPointerExceptions(NullPointerException e) {
-        return ResponseEntity.badRequest().body(errorMsg("NullPointerException", "Check Access token"));
-    }
+//    @ExceptionHandler(NullPointerException.class)
+//    public ResponseEntity<?> handleNullPointerExceptions(NullPointerException e) {
+//        return ResponseEntity.badRequest().body(errorMsg("NullPointerException", "Check Access token"));
+//    }
 
     private Map<String, String> errorMsg(String name, String msg) {
         Map<String, String> error = new HashMap<>();
