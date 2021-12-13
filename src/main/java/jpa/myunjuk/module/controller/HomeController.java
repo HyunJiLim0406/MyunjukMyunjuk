@@ -1,5 +1,6 @@
 package jpa.myunjuk.module.controller;
 
+import jpa.myunjuk.infra.exception.InvalidTokenException;
 import jpa.myunjuk.module.model.domain.User;
 import jpa.myunjuk.module.model.dto.HomeDto;
 import jpa.myunjuk.module.service.HomeService;
@@ -23,6 +24,8 @@ public class HomeController {
     public ResponseEntity<?> home(@AuthenticationPrincipal User user,
                                   @RequestParam(required = false) Integer year,
                                   @RequestParam(required = false) Integer month) {
+        if (user == null)
+            throw new InvalidTokenException("Check Access Token");
         log.info("[Request] home " + user.getEmail());
         HomeDto result = homeService.home(user, year, month);
         if (result.getSize() == 0)
