@@ -3,6 +3,7 @@ package jpa.myunjuk.infra.jwt;
 import io.jsonwebtoken.*;
 import jpa.myunjuk.infra.exception.ExpiredJwtTokenException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,18 +13,22 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     @Value("${secret.key}")
     private String secretKey;
 
-    private final long ACCESS_TOKEN_VALID_TIME = 20 * 1000L; //유효시간 1분
+    private final Key key;
+
+    private final long ACCESS_TOKEN_VALID_TIME = 30 * 1000L; //유효시간 1분
     //private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L; //유효시간 30분
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 12 * 1000L; //유효시간 2주
 
@@ -44,7 +49,8 @@ public class JwtTokenProvider {
                 .setClaims(claims) //정보 저장
                 .setIssuedAt(now) //토큰 발행 시간
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_VALID_TIME)) //토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
+                .signWith(key, SignatureAlgorithm.HS512)
+                //.signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
                 .compact();
     }
 
@@ -57,7 +63,8 @@ public class JwtTokenProvider {
                 .setClaims(claims) //정보 저장
                 .setIssuedAt(now) //토큰 발행 시간
                 .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_VALID_TIME)) //토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
+                .signWith(key, SignatureAlgorithm.HS512)
+                //.signWith(SignatureAlgorithm.HS256, secretKey) //사용할 암호화 알고리즘
                 .compact();
     }
 
@@ -69,7 +76,8 @@ public class JwtTokenProvider {
 
     //토큰에서 회원 정보 얻어내기
     private String getUserPk(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
+        //return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     //Request의 Header에서 token 값 가져오기. "X-AUTH-TOKEN" : "TOKEN값"
@@ -78,19 +86,37 @@ public class JwtTokenProvider {
     }
 
     //토큰의 유효성과 만료일자 확인
-    public boolean validateToken(String jwtToken) {
-//        try {
-//            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-//            return !claims.getBody().getExpiration().before(new Date()); //만료일자
-//        } catch (Exception e) { //유효성
-//            return false;
-//        }
-        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-        return true;
+//    public boolean validateToken(String jwtToken) {
+////        try {
+////            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+////            return !claims.getBody().getExpiration().before(new Date()); //만료일자
+////        } catch (Exception e) { //유효성
+////            return false;
+////        }
+//        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+//        return true;
+//    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            //Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return false;
     }
 
     //refresh token 정보 얻어내기
     public Claims getClaimsFromJwtToken(String jwtToken) throws JwtException {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken).getBody();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(jwtToken).getBody();
+        //return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken).getBody();
     }
 }

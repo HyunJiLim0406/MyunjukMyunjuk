@@ -1,6 +1,8 @@
 package jpa.myunjuk.infra.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -46,15 +48,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorMsg("MethodArgumentTypeMismatchException", e.getMessage()));
     }
 
+//    @ExceptionHandler(UsernameNotFoundException.class)
+//    public ResponseEntity<?> handleUsernameNotFoundExceptions(UsernameNotFoundException e) {
+//        return ResponseEntity.badRequest().body(errorMsg("UsernameNotFoundException", e.getMessage()));
+//    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public ResponseEntity<?> handleInsufficientAuthenticationExceptions(InsufficientAuthenticationException e){
+        return ResponseEntity.badRequest().body(errorMsg("InsufficientAuthenticationException", e.getMessage()));
+    }
+
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<?> handleDateTimeParseExceptions(DateTimeParseException e) {
         return ResponseEntity.badRequest().body(errorMsg(e.getParsedString(), e.getMessage()));
     }
 
-//    @ExceptionHandler(NullPointerException.class)
-//    public ResponseEntity<?> handleNullPointerExceptions(NullPointerException e) {
-//        return ResponseEntity.badRequest().body(errorMsg("NullPointerException", "Check Access token"));
-//    }
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<?> handleNullPointerExceptions(NullPointerException e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest().body(errorMsg("NullPointerException", "Check Access token"));
+    }
 
     private Map<String, String> errorMsg(String name, String msg) {
         Map<String, String> error = new HashMap<>();
