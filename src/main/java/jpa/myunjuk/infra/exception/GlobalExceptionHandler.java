@@ -1,5 +1,6 @@
 package jpa.myunjuk.infra.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleMethodArgumentTypeMismatchExceptions(MethodArgumentTypeMismatchException e) {
         return ResponseEntity.badRequest().body(errorMsg("MethodArgumentTypeMismatchException", e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenExceptions(InvalidTokenException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMsg("InvalidTokenException", e.getMessage()));
     }
 
     @ExceptionHandler(DateTimeParseException.class)
